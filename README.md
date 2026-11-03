@@ -1,4 +1,4 @@
-# Khromium — Alpha 0.0.1
+# Khromium — Alpha 0.0.2
 
 An experimental Chromium-powered browser for the jailbroken **Kindle Paperwhite 4 on firmware 5.17.1**, with a touch-friendly GTK2 interface and an on-screen keyboard.
 
@@ -6,9 +6,11 @@ An experimental Chromium-powered browser for the jailbroken **Kindle Paperwhite 
 
 ![Khromium home](docs/home.png)
 
+[Changes in this version](CHANGELOG.md) · [Keyboard preview](docs/keyboard.png) · [Menu preview](docs/menu.png)
+
 ## Download and install
 
-1. Download `Khromium-Alpha-0.0.1-PW4.zip` from [Releases](https://github.com/gabo11dev/Khromium/releases).
+1. Download `Khromium-Alpha-0.0.2-PW4.zip` from [Releases](https://github.com/gabo11dev/Khromium/releases).
 2. You need an already jailbroken PW4 with KUAL installed. This package does not jailbreak or update your Kindle. Allow about **260 MB of free storage** plus space for website data.
 3. Connect the Kindle over USB and extract the ZIP **into the USB drive root**, keeping its folders:
    ```text
@@ -34,9 +36,9 @@ Close any earlier Chromium experiment before opening Khromium. This version uses
 - The toolbar provides Home, Back, Reload, Forward, address/search, Keyboard, More and Exit.
 - The top clock/battery strip is the **Kindle system status bar**. The window requests it through the Kindle window manager's `PC:T` property; it does not draw an imitation. This new behavior still needs confirmation on physical hardware.
 - The default home page works offline. Choose Google, DuckDuckGo or **WWW**. WWW opens your input directly as an address, adding `https://` when needed; it never sends the text to a search engine. Input containing spaces requires a search provider.
-- Keyboard toggles the bottom keyboard even with no field selected. Tap a field to choose where typing goes. Shift changes letter case; symbols, Space, Backspace and Enter are available.
+- Keyboard toggles the bottom keyboard even with no field selected. Tap a field to choose where typing goes. Larger keys include ñ/Ñ, Shift, symbols, Space, Backspace and Enter. The keyboard has no extra heading or preview bar; use the toolbar Keyboard button to close it.
 - Swipe vertically to scroll pages.
-- More opens History, Favorites and Settings. Favorites stores pages and reopens them in the current browser view. There are no simultaneous tabs in this alpha.
+- More opens a Kindle-inspired menu with large touch rows for History, Favorites and Settings. Favorites stores pages and reopens them in the current browser view. There are no simultaneous tabs in this alpha.
 - Favorites initially contains **Chromium Settings** (`chromium://settings`) and **Dino** (`chromium://dino`). The settings address opens Khromium's GTK2 settings dialog: the headless engine does not provide the full desktop Chrome settings page. Dino uses bundled upstream Chromium game code adapted for this frontend.
 - Settings changes the homepage, default search provider and user agent (Android 11 or Debian 13), and can delete cookies. The user-agent option changes browser identification and client hints; it does not install another operating system.
 
@@ -84,7 +86,7 @@ The packager takes the original working GTK2 prototype ZIP (for its private runt
 ```sh
 python3 scripts/package.py --base /path/chromium-pw4-156-experimental.zip \
   --engine-dir /path/extracted/usr/lib/chromium \
-  --output /path/Khromium-Alpha-0.0.1-PW4.zip
+  --output /path/Khromium-Alpha-0.0.2-PW4.zip
 ```
 
 The release ZIP includes a source archive. This repository does not include binary engines or private browsing data. See [third-party notices](THIRD_PARTY_NOTICES.md) for component provenance and source locations. The standalone repository is not a replacement for the external ARM runtime input.
