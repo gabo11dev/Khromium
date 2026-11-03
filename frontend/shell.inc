@@ -166,7 +166,7 @@ static gboolean draw_icon(GtkWidget *widget,GdkEventExpose *event,gpointer kind)
     switch(GPOINTER_TO_INT(kind)){
     case ICON_HOME:cairo_move_to(c,3,15);cairo_line_to(c,16,4);cairo_line_to(c,29,15);cairo_move_to(c,7,13);cairo_line_to(c,7,28);cairo_line_to(c,13,28);cairo_line_to(c,13,20);cairo_line_to(c,20,20);cairo_line_to(c,20,28);cairo_line_to(c,26,28);cairo_line_to(c,26,13);break;
     case ICON_BACK:case ICON_FORWARD:{gboolean forward=GPOINTER_TO_INT(kind)==ICON_FORWARD;if(forward){cairo_translate(c,32,0);cairo_scale(c,-1,1);}cairo_move_to(c,26,16);cairo_line_to(c,5,16);cairo_line_to(c,14,7);cairo_move_to(c,5,16);cairo_line_to(c,14,25);break;}
-    case ICON_RELOAD:cairo_arc(c,16,16,11,0.1,5.1);cairo_move_to(c,21,3);cairo_line_to(c,22,11);cairo_line_to(c,29,8);break;
+    case ICON_RELOAD:cairo_set_line_width(c,2.7);cairo_arc(c,16,16,11,0.45,5.5);cairo_move_to(c,24,1);cairo_line_to(c,24,8);cairo_line_to(c,17,8);break;
     case ICON_KEYBOARD:cairo_rectangle(c,2,7,28,20);for(int row=0;row<2;++row)for(int column=0;column<5;++column){cairo_move_to(c,6+column*5,12+row*5);cairo_line_to(c,7+column*5,12+row*5);}cairo_move_to(c,10,23);cairo_line_to(c,22,23);break;
     case ICON_MORE:for(int i=0;i<3;++i){cairo_arc(c,16,7+i*9,1.8,0,6.29);cairo_fill(c);}break;
     case ICON_EXIT:cairo_move_to(c,7,7);cairo_line_to(c,25,25);cairo_move_to(c,25,7);cairo_line_to(c,7,25);break;
@@ -176,7 +176,7 @@ static GtkWidget *icon_button(GtkWidget *row,const char *name,int icon,GCallback
     GtkWidget *b=gtk_button_new(),*drawing=gtk_drawing_area_new();gtk_button_set_relief(GTK_BUTTON(b),GTK_RELIEF_NONE);gtk_widget_set_size_request(b,62,66);gtk_button_set_focus_on_click(GTK_BUTTON(b),FALSE);gtk_container_add(GTK_CONTAINER(b),drawing);gtk_widget_set_tooltip_text(b,name);atk_object_set_name(gtk_widget_get_accessible(b),name);gtk_box_pack_start(GTK_BOX(row),b,FALSE,FALSE,0);g_signal_connect(drawing,"expose-event",G_CALLBACK(draw_icon),GINT_TO_POINTER(icon));g_signal_connect(b,"clicked",callback,value);return b;
 }
 static void build_window(void){
-    app.window=gtk_window_new(GTK_WINDOW_TOPLEVEL);gtk_window_set_title(GTK_WINDOW(app.window),"Khromium Alpha 0.0.1");
+    app.window=gtk_window_new(GTK_WINDOW_TOPLEVEL);gtk_window_set_title(GTK_WINDOW(app.window),"Khromium Alpha 0.0.2");
 #ifdef KINDLE_UI
     gtk_window_set_title(GTK_WINDOW(app.window),"L:A_N:application_PC:T_ID:org.khromium.browser_O:U");gtk_window_set_decorated(GTK_WINDOW(app.window),FALSE);
 #endif
@@ -186,12 +186,22 @@ static void build_window(void){
     app.address=text_entry("");gtk_box_pack_start(GTK_BOX(bar),app.address,TRUE,TRUE,0);gtk_widget_set_tooltip_text(app.address,"Search or enter address");atk_object_set_name(gtk_widget_get_accessible(app.address),"Search or enter address");
     icon_button(bar,"Keyboard",ICON_KEYBOARD,G_CALLBACK(toggle_keyboard),NULL);icon_button(bar,"More",ICON_MORE,G_CALLBACK(more),NULL);icon_button(bar,"Exit",ICON_EXIT,G_CALLBACK(quit),NULL);
     gtk_box_pack_start(GTK_BOX(box),gtk_hseparator_new(),FALSE,FALSE,0);
-    app.more_menu=gtk_menu_new();const char *names[]={"History","Favorites","Settings"};GCallback callbacks[]={G_CALLBACK(show_history),G_CALLBACK(show_favorites),G_CALLBACK(show_settings)};
-    for(int i=0;i<3;++i){GtkWidget *item=gtk_menu_item_new_with_label(names[i]);gtk_widget_set_size_request(item,260,64);gtk_menu_shell_append(GTK_MENU_SHELL(app.more_menu),item);g_signal_connect(item,"activate",callbacks[i],NULL);}gtk_widget_show_all(app.more_menu);
+    app.more_menu=gtk_menu_new();gtk_widget_set_name(app.more_menu,"khromium-menu");
+    gtk_rc_parse_string("style \"kindle-menu\" { font_name = \"Sans 22\" xthickness = 1 ythickness = 1 bg[NORMAL] = \"#ffffff\" bg[PRELIGHT] = \"#e5e5e5\" fg[NORMAL] = \"#000000\" fg[PRELIGHT] = \"#000000\" } widget \"*khromium-menu*\" style \"kindle-menu\"");
+    GtkWidget *menu_heading=gtk_menu_item_new(),*menu_title=gtk_label_new("Khromium");gtk_widget_set_sensitive(menu_heading,FALSE);gtk_misc_set_alignment(GTK_MISC(menu_title),0,0.5);gtk_misc_set_padding(GTK_MISC(menu_title),24,12);gtk_container_add(GTK_CONTAINER(menu_heading),menu_title);gtk_menu_shell_append(GTK_MENU_SHELL(app.more_menu),menu_heading);
+    const char *names[]={"History","Favorites","Settings"};GCallback callbacks[]={G_CALLBACK(show_history),G_CALLBACK(show_favorites),G_CALLBACK(show_settings)};
+    for(int i=0;i<3;++i){
+        gtk_menu_shell_append(GTK_MENU_SHELL(app.more_menu),gtk_separator_menu_item_new());
+        GtkWidget *item=gtk_menu_item_new(),*row=gtk_hbox_new(FALSE,12),*label=gtk_label_new(names[i]),*arrow=gtk_label_new("›");
+        gtk_container_set_border_width(GTK_CONTAINER(row),22);gtk_misc_set_alignment(GTK_MISC(label),0,0.5);gtk_box_pack_start(GTK_BOX(row),label,TRUE,TRUE,0);gtk_box_pack_end(GTK_BOX(row),arrow,FALSE,FALSE,0);gtk_container_add(GTK_CONTAINER(item),row);
+        gtk_widget_set_size_request(item,410,96);atk_object_set_name(gtk_widget_get_accessible(item),names[i]);gtk_menu_shell_append(GTK_MENU_SHELL(app.more_menu),item);g_signal_connect(item,"activate",callbacks[i],NULL);
+    }gtk_widget_show_all(app.more_menu);
     app.status=gtk_label_new("Starting Khromium…");gtk_widget_set_size_request(app.status,-1,36);gtk_box_pack_start(GTK_BOX(box),app.status,FALSE,FALSE,0);
     app.viewport=gtk_event_box_new();app.image=gtk_drawing_area_new();gtk_widget_set_size_request(app.viewport,320,200);gtk_container_add(GTK_CONTAINER(app.viewport),app.image);gtk_box_pack_start(GTK_BOX(box),app.viewport,TRUE,TRUE,0);g_signal_connect(app.image,"expose-event",G_CALLBACK(draw_page),NULL);
-    app.keyboard_panel=gtk_vbox_new(FALSE,2);GtkWidget *heading=gtk_hbox_new(FALSE,4);app.keyboard_title=gtk_label_new("Keyboard");gtk_box_pack_start(GTK_BOX(heading),app.keyboard_title,TRUE,TRUE,0);app.keyboard_clear=button(heading,"Clear",G_CALLBACK(keyboard_key),NULL);button(heading,"Hide",G_CALLBACK(hide_keyboard),NULL);gtk_box_pack_start(GTK_BOX(app.keyboard_panel),heading,FALSE,FALSE,0);
-    app.keyboard_entry=gtk_entry_new();gtk_editable_set_editable(GTK_EDITABLE(app.keyboard_entry),FALSE);gtk_box_pack_start(GTK_BOX(app.keyboard_panel),app.keyboard_entry,FALSE,FALSE,0);app.keyboard_rows=gtk_vbox_new(FALSE,2);gtk_box_pack_start(GTK_BOX(app.keyboard_panel),app.keyboard_rows,FALSE,FALSE,0);rebuild_keys();gtk_box_pack_end(GTK_BOX(box),app.keyboard_panel,FALSE,FALSE,0);
+    app.keyboard_panel=gtk_vbox_new(FALSE,2);
+    /* Keep input bookkeeping private: only the keys are visible. */
+    app.keyboard_entry=gtk_entry_new();gtk_editable_set_editable(GTK_EDITABLE(app.keyboard_entry),FALSE);gtk_widget_set_no_show_all(app.keyboard_entry,TRUE);gtk_box_pack_start(GTK_BOX(app.keyboard_panel),app.keyboard_entry,FALSE,FALSE,0);
+    app.keyboard_rows=gtk_vbox_new(FALSE,2);gtk_box_pack_start(GTK_BOX(app.keyboard_panel),app.keyboard_rows,FALSE,FALSE,0);rebuild_keys();gtk_box_pack_end(GTK_BOX(box),app.keyboard_panel,FALSE,FALSE,0);
     gtk_widget_add_events(app.viewport,GDK_BUTTON_PRESS_MASK|GDK_BUTTON_RELEASE_MASK|GDK_SCROLL_MASK);g_signal_connect(app.viewport,"button-press-event",G_CALLBACK(click_page),NULL);g_signal_connect(app.viewport,"button-release-event",G_CALLBACK(click_page),NULL);g_signal_connect(app.viewport,"scroll-event",G_CALLBACK(scroll_event),NULL);g_signal_connect(app.viewport,"size-allocate",G_CALLBACK(resize_page),NULL);g_signal_connect(app.address,"activate",G_CALLBACK(open_address),NULL);g_signal_connect(app.window,"destroy",G_CALLBACK(quit),NULL);
     gtk_widget_show_all(app.window);gtk_widget_hide(app.keyboard_panel);
 }

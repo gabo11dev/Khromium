@@ -17,7 +17,7 @@
  * There is no network listener or remote rendering service. */
 typedef struct {
     GtkWidget *window, *image, *viewport, *address, *status;
-    GtkWidget *keyboard_panel, *keyboard_entry, *keyboard_rows, *keyboard_title, *keyboard_clear, *ua_button;
+    GtkWidget *keyboard_panel, *keyboard_entry, *keyboard_rows, *ua_button;
     GtkWidget *keyboard_target, *more_menu, *settings_dialog, *settings_notice;
     GPtrArray *favorites, *visits;
     GKeyFile *preferences;
@@ -605,7 +605,9 @@ static void keyboard_key(GtkWidget *widget, gpointer unused) {
 }
 static void key_button(GtkWidget *row, const char *label) {
     GtkWidget *key=gtk_button_new_with_label(label);
-    gtk_widget_set_size_request(key,-1,68);
+    gtk_widget_set_size_request(key,-1,96);
+    PangoFontDescription *font=pango_font_description_from_string("Sans 22");
+    gtk_widget_modify_font(gtk_bin_get_child(GTK_BIN(key)),font);pango_font_description_free(font);
     gtk_button_set_focus_on_click(GTK_BUTTON(key),FALSE);
     gtk_box_pack_start(GTK_BOX(row),key,TRUE,TRUE,0);
     g_signal_connect(key,"clicked",G_CALLBACK(keyboard_key),NULL);
@@ -614,7 +616,7 @@ static void rebuild_keys(void) {
     GList *children=gtk_container_get_children(GTK_CONTAINER(app.keyboard_rows));
     for (GList *i=children;i;i=i->next) gtk_widget_destroy(GTK_WIDGET(i->data));
     g_list_free(children);
-    const char *letters[]={"qwertyuiop","asdfghjkl","zxcvbnm,."};
+    const char *letters[]={"qwertyuiop","asdfghjklñ","zxcvbnm,."};
     const char *symbols[]={"1234567890","@#%&*()-_",":;/?!+=\"'"};
     for (guint r=0;r<3;++r) {
         GtkWidget *row=gtk_hbox_new(TRUE,3);
@@ -637,10 +639,8 @@ static void keyboard(GtkWidget *widget,gpointer address_mode) {
     (void)widget;
     app.keyboard_address=GPOINTER_TO_INT(address_mode);
     if(app.keyboard_address)app.keyboard_target=app.address;
-    gtk_label_set_text(GTK_LABEL(app.keyboard_title),app.keyboard_target ? "Edit text · Enter to apply" : "Keyboard · Enter to send");
     gtk_entry_set_text(GTK_ENTRY(app.keyboard_entry),app.keyboard_target ? gtk_entry_get_text(GTK_ENTRY(app.keyboard_target)) : "");
     gtk_widget_show(app.keyboard_panel);
-    if(app.keyboard_target)gtk_widget_show(app.keyboard_clear);else gtk_widget_hide(app.keyboard_clear);
 }
 static void toggle_keyboard(GtkWidget *widget,gpointer unused) {
     (void)widget;(void)unused;
