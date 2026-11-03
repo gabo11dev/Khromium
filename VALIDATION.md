@@ -18,3 +18,19 @@ Not yet verified on physical hardware: this new frontend's layout/touch behavior
 - Verified the keyboard has no visible heading/preview bar, its key area is at least 390 pixels tall, and it still opens/closes independently of input focus.
 - Opened the new More menu and activated Settings through its real menu item. Existing cookies, preferences, favorites, UA and Dino integration checks still pass.
 - Inspected the rendered keyboard, menu and new Reload icon on the native test display. Physical Kindle appearance and native system status bar still require device confirmation.
+
+# Khromium 156.0 HF — validation, 2026-11-03
+
+- ARMv7 hard-float and desktop test builds compile with `-Wall -Wextra -Werror`.
+- Normal and Full Page integration tests pass with a real Chromium 156 engine on an isolated desktop virtual display.
+- No visible secondary GTK windows and no combo boxes in the new panels. Search and UA are selected through actual radio buttons; cookies and preference persistence are verified.
+- Independent UI/page scale is saved. At 150% page scale the engine reports devicePixelRatio 1.5 and the expected narrower CSS viewport. Landscape at 150% UI scale retains at least 200 pixels of page area.
+- Actual GTK input taps on Back/Forward/Reload navigate A → B → A, reload A (load count increases), and return to B. Reload also closes an open menu panel.
+- The real visible keyboard buttons enter `hIñÑ`, delete an extra letter, send Enter, and send all four arrow events. After blur the keyboard closes; the resulting page-image height matches the expanded viewport. Manually reopened Down scrolls the page.
+- Screen Refresh is tapped through GTK. A recording eips substitute confirms invocation with exactly `-c`; the production callback runs `eips -c > /dev/null 2>&1` and repaints on completion. No physical framebuffer is accessed in the desktop test.
+- Existing Chrome/Chromium Settings and Dino entries are removed while a custom favorite is preserved. Fresh profiles have no seeded internal favorites. Removed internal URLs are rejected.
+- Full Page reads the separately configured local URL, hides toolbar/status, opens/closes the keyboard with focus/blur, and exits through the real two-second upper-left hold timer.
+- A recording orientation helper verifies U/R/D/L mapping, saved normal/full-page selections, requests and restoration. These are integration-request tests, not proof of physical screen rotation.
+- The 156.0 RC1 is republished as 156.0 HF. Only version/publication labels change; browser behavior and bundled engine/runtime are unchanged.
+
+Still requires a PW4 test: physical orientation in all four positions, native window-manager sizing, e-ink screen clearing/repainting and the final touch layout. The previous user photos confirmed the old popup-menu/combobox problem; HF replaces those popup surfaces completely.

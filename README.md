@@ -1,102 +1,116 @@
-# Khromium — Alpha 0.0.2
+# Khromium 156.0 HF
 
-An experimental Chromium-powered browser for the jailbroken **Kindle Paperwhite 4 on firmware 5.17.1**, with a touch-friendly GTK2 interface and an on-screen keyboard.
+A local Chromium 156 browser for the jailbroken **Kindle Paperwhite 4, firmware 5.17.1**, with a GTK2 touch interface and on-screen keyboard.
 
-**Made with AI:** this project was developed with substantial AI assistance, including generated code and documentation. It is an independent experiment, unaffiliated with Amazon or the Chromium project. Please report bugs and review the code before relying on it.
+**This is the hard-float (HF) release of the previously delivered 156.0 RC1.** It is published as a normal GitHub release. The SF/PW3 alpha is a separate build; do not use it for this target.
 
-![Khromium home](docs/home.png)
+**AI disclosure:** developed with substantial AI assistance, including generated code and documentation. This is an independent experiment, unaffiliated with Amazon or Chromium.
 
-[Changes in this version](CHANGELOG.md) · [Keyboard preview](docs/keyboard.png) · [Menu preview](docs/menu.png)
+HF means hard-float firmware. This package targets PW4 firmware 5.17.1; it is not the SF/PW3 package. Other hard-float models/firmware have not been validated.
 
-## Download and install
+## Install or update
 
-1. Download `Khromium-Alpha-0.0.2-PW4.zip` from [Releases](https://github.com/gabo11dev/Khromium/releases).
-2. You need an already jailbroken PW4 with KUAL installed. This package does not jailbreak or update your Kindle. Allow about **260 MB of free storage** plus space for website data.
-3. Connect the Kindle over USB and extract the ZIP **into the USB drive root**, keeping its folders:
-   ```text
-   Kindle USB root/
-     khromiumld.so
-     extensions/
-       khromium/
-         bin/
-         engine/
-         runtime/
-         assets/
-         launch.sh
-         ...
-   ```
-   Do not place everything inside an extra folder. The installed path must be `/mnt/us/extensions/khromium`.
-4. Eject the Kindle safely. In KUAL, open **Khromium → Open Khromium**.
-5. Use **×** to exit. If it becomes unresponsive, use **Stop Khromium** in KUAL. Installation diagnostics are saved under `extensions/khromium/state/check.log`; the run log is `state/run.log`.
+Close Khromium before replacing files.
 
-Close any earlier Chromium experiment before opening Khromium. This version uses its own installation folder and profile. To uninstall, close it and remove `extensions/khromium` and `khromiumld.so`. Removing `state/profile` resets settings, favorites, history, cookies and other browsing data.
+- **Existing Khromium Alpha 0.0.1, 0.0.2 or 156.0 RC1:** extract `Khromium-156.0-HF-update.zip` into the Kindle USB root and replace matching files. Keep `extensions/khromium/state` to preserve your browsing data. The engine, runtime and loader are unchanged.
+- **New installation:** extract `Khromium-156.0-HF-PW4.zip` into the Kindle USB root. Keep `khromiumld.so` directly at the root and the app at `extensions/khromium`. About 260 MB free storage plus website data is required. KUAL and an already jailbroken PW4 are required.
 
-## Interface
+Safely eject, reopen KUAL and refresh/reload its menu if it still shows the old entries. This package does not jailbreak, update firmware or replace system libraries.
 
-- The toolbar provides Home, Back, Reload, Forward, address/search, Keyboard, More and Exit.
-- The top clock/battery strip is the **Kindle system status bar**. The window requests it through the Kindle window manager's `PC:T` property; it does not draw an imitation. This new behavior still needs confirmation on physical hardware.
-- The default home page works offline. Choose Google, DuckDuckGo or **WWW**. WWW opens your input directly as an address, adding `https://` when needed; it never sends the text to a search engine. Input containing spaces requires a search provider.
-- Keyboard toggles the bottom keyboard even with no field selected. Tap a field to choose where typing goes. Larger keys include ñ/Ñ, Shift, symbols, Space, Backspace and Enter. The keyboard has no extra heading or preview bar; use the toolbar Keyboard button to close it.
-- Swipe vertically to scroll pages.
-- More opens a Kindle-inspired menu with large touch rows for History, Favorites and Settings. Favorites stores pages and reopens them in the current browser view. There are no simultaneous tabs in this alpha.
-- Favorites initially contains **Chromium Settings** (`chromium://settings`) and **Dino** (`chromium://dino`). The settings address opens Khromium's GTK2 settings dialog: the headless engine does not provide the full desktop Chrome settings page. Dino uses bundled upstream Chromium game code adapted for this frontend.
-- Settings changes the homepage, default search provider and user agent (Android 11 or Debian 13), and can delete cookies. The user-agent option changes browser identification and client hints; it does not install another operating system.
+## KUAL entries
 
-## Limits and safety
+```text
+Khromium >
+    Open Khromium
+    Close Khromium
+Khromium Full Page
+```
 
-This is an **alpha**, not a supported Chromium distribution. The previous GTK2 prototype worked on the owner's PW4; this release's new interface has been tested on a desktop with Chromium and with the ARM engine under emulation. Its final appearance, native status bar and dialog placement require a physical Kindle test.
+The Full Page item is on KUAL's main page. It starts the configured URL with no browser toolbar or Kindle status bar. Switching between normal and Full Page closes the previous browser instance, so both modes share the same profile safely.
 
-The included launcher runs Chromium **without its sandbox**, because the target Kindle kernel lacks the required facilities. A malicious website exploiting Chromium could access files and permissions available to the browser. Avoid sensitive accounts and untrusted pages. HTTPS certificate validation remains enabled. There is no automatic security-update mechanism.
+To exit Full Page, **hold the upper-left 60 × 60 pixels for two seconds** without moving. You can also use Close Khromium from KUAL after returning to the launcher. Exiting restores the system orientation captured at launch.
 
-The device has about 512 MB RAM. Complex sites can exhaust memory. Pages are captured to the GTK2 view about once per second; video, animations and Dino are slow on e-ink. Downloads, audio/video playback, extensions, password management and desktop Chromium UI are not implemented. Engine processes and the keyboard can consume substantial battery.
+## Normal browser
 
-## What is actually running?
+The toolbar provides Home, Back, Reload, Forward, address/search, Keyboard, **Refresh screen**, More and Exit. The normal mode requests the Kindle's own clock/battery status bar.
 
-- Chromium **headless-shell 156.0.8078.73 ARMhf**, from Raspberry Pi's Debian 12 packages, running locally on the Kindle.
-- A small custom GTK2 C frontend using the Kindle's GTK2 and X11.
-- A private Debian 12 ARMhf runtime (glibc 2.36), without replacing firmware libraries.
-- The engine ELF interpreter path is changed to `/mnt/us/khromiumld.so`; the engine code is otherwise unchanged. This is a frontend/integration port, not a full Chromium source rebuild against GTK2.
+- Back/Forward use Chromium's navigation history. Reload refreshes the current document.
+- The screen-refresh button, next to Keyboard, executes exactly `eips -c > /dev/null 2>&1`, then repaints the application when the command finishes.
+- Keyboard can be toggled manually with no text field selected. When a web text field receives focus it opens automatically; when focus leaves it closes automatically. Manually opened keyboard stays available for page control until you toggle it off or tap the page.
+- The keyboard includes Shift, ñ/Ñ, symbols, Space, Backspace, Enter and **← ↑ ↓ →**. Arrows move the cursor in text fields and send arrow keys to the page otherwise. On ordinary pages Up/Down scroll; sites can use arrows for their own controls.
+- Vertical swipes also scroll the page.
+- More opens an **in-window panel** with History, Favorites and Settings. No GtkMenu, combo-box popup or separate settings window is used: this avoids Kindle window-manager decoration and clipping of popup controls.
+- Favorites stores pages and reopens them in the current view. There are no simultaneous tabs. Favorites initially starts empty in HF.
+- Dino and the `chrome://settings`, `chromium://settings`, `chrome://dino` and `chromium://dino` shortcuts have been removed. Saved entries for those routes are removed from existing favorites/history; other saved pages are preserved. If one was your homepage/full-page URL, it falls back to the Khromium home page. Old bundled Dino files are cleaned up at launch after updating.
 
-The Kindle framework stays running so it can provide the system status bar. Window-manager behavior is documented by the community in [Awesome Window Manager](https://kindlemodding.org/kindle-dev/awesome-window-manager/).
+## Settings
 
-## Build the frontend
+Use More → Settings. Options are divided into three pages with visible buttons; there are **no dropdown menus**. Changes apply after pressing **Save**; Close/Cancel discard unsaved changes.
 
-Requires Python 3, pkg-config, and a Chromium checkout containing its Clang toolchain and Bullseye ARMhf sysroot (GTK2 headers/libraries). The release frontend used the Chromium 156.0.8078.79 checkout.
+### General
+
+- Homepage and Default home.
+- Delete cookies.
+- Default search: WWW (direct address), Google or DuckDuckGo, selected using radio buttons.
+- User agent: Debian 13 or Android 11, also using radio buttons. This changes identification/client hints; it does not install a different operating system.
+
+WWW opens input directly as an address, adding `https://` when needed. It does not send the input to a search provider. Text with spaces requires Google or DuckDuckGo.
+
+### Display
+
+- **Browser interface scale:** 75–150% in 25-point steps. Changes toolbar, settings and keyboard size.
+- **Page scale:** 50–250% in 25-point steps. Changes website content independently of the browser interface. Applies in normal and Full Page modes. Input coordinates follow this scale.
+- **Browser orientation:** Portrait, Landscape, Portrait inverted or Landscape inverted.
+
+The keyboard uses shorter keys in landscape to retain page space.
+
+### Full Page
+
+- URL opened by KUAL's **Khromium Full Page** entry.
+- Separate orientation: Portrait, Landscape, Portrait inverted or Landscape inverted.
+
+Use the normal browser to configure Full Page before launching it. Full Page has automatic keyboard behavior and the same page scale. Its two-second upper-left exit gesture is available even if the website becomes unresponsive.
+
+Orientation requests use the Kindle's existing `com.lab126.winmgr` service. No rotation tools or firmware patches are installed. See the community's [window-manager title documentation](https://kindlemodding.org/kindle-dev/awesome-window-manager/) and the [kterm orientation implementation](https://github.com/bfabiszewski/kterm/blob/master/kindle.c). Orientation is a real device integration and requires confirmation on the target Kindle.
+
+## Validation and limits
+
+See `VALIDATION.md`. Desktop tests exercise real Chromium navigation, reload, typing, automatic focus/blur, all four arrows, page zoom, cookie deletion, saved settings, profile migration and the Full Page exit gesture. Orientation and eips are tested through substitutes on the PC; real hardware rotation and e-ink refresh still need confirmation on the PW4.
+
+HF also invalidates stale screenshot requests during navigation/resizing, retries stuck captures and repaints the whole viewport when the keyboard closes. The desktop test checks that the resulting page image again fills the expanded viewport.
+
+The earlier GTK2 version ran on the owner's PW4; its photos confirmed that popup menus and combo boxes rendered incorrectly. That is not a physical test of this HF release.
+
+The launcher runs Chromium **without its sandbox**, because the target kernel lacks required facilities. A malicious website exploiting Chromium could access files available to the browser. Avoid sensitive accounts and untrusted sites. HTTPS certificate validation remains enabled. There are no automatic security updates.
+
+The Kindle has about 512 MB RAM. Complex pages can exhaust memory. Rendering is approximately one frame per second; video/animation, downloads, audio, extensions and desktop Chrome UI are not implemented.
+
+Logs: `extensions/khromium/state/run.log`. Profile/settings: `state/profile/khromium.ini`, `favorites.ini`, `history.ini` and Chromium's profile files. Removing `state/profile` resets all browsing data. To uninstall, close the browser and remove `extensions/khromium` and the root `khromiumld.so`.
+
+## Engine and build
+
+The engine is the same Raspberry Pi Debian 12 ARMhf **Chromium headless-shell 156.0.8078.73**, with a private Debian 12 runtime/glibc 2.36. Its ELF interpreter string is changed to `/mnt/us/khromiumld.so`; browser engine code is unchanged. The GTK2 C frontend links against Kindle firmware libraries. The engine runs locally on the Kindle, not on a remote PC.
+
+To build the frontend, set `CHROMIUM_SRC` to a Chromium checkout containing its Clang toolchain and Bullseye ARMhf GTK2 sysroot:
 
 ```sh
 export CHROMIUM_SRC=/path/to/chromium/src
 python3 frontend/build.py armhf
-# Output: build/frontend-armhf/khromium
 ```
 
-For a native Linux test build, install the GTK2 development package and run `python3 frontend/build.py amd64`. A native build requires a headless-shell engine and X11:
+Output: `build/frontend-armhf/khromium`. This release used the 156.0.8078.79 checkout/compiler. Keep compatibility with the Kindle's older GTK2/GLib. For a native desktop build, install GTK2 development files and use `python3 frontend/build.py amd64` (or the amd64 Chromium sysroot).
 
 ```sh
-mkdir -p /tmp/khromium-profile
 build/frontend-amd64/khromium --engine /absolute/path/chrome-headless-shell \
   --profile /tmp/khromium-profile --assets "$PWD/assets"
+# Add --full-page for the separate mode; only add --unsafe-no-sandbox if needed.
 ```
 
-Only add `--unsafe-no-sandbox` when required by your test environment. The ARM release frontend must remain compatible with the Kindle's older GLib/GTK2; do not blindly build it against a newer system runtime.
-
-## Assemble a release
-
-The packager takes the original working GTK2 prototype ZIP (for its private runtime/licenses) and the **unmodified** ARM Chromium package directory (for the engine), then copies the new frontend and assets. It checks all engine/runtime shared-library dependencies and writes checksums.
+The packager reuses the original prototype's runtime/licenses and an unmodified extracted ARM engine directory:
 
 ```sh
 python3 scripts/package.py --base /path/chromium-pw4-156-experimental.zip \
-  --engine-dir /path/extracted/usr/lib/chromium \
-  --output /path/Khromium-Alpha-0.0.2-PW4.zip
+  --engine-dir /path/extracted/usr/lib/chromium --output /path/Khromium-156.0-HF-PW4.zip
 ```
 
-The release ZIP includes a source archive. This repository does not include binary engines or private browsing data. See [third-party notices](THIRD_PARTY_NOTICES.md) for component provenance and source locations. The standalone repository is not a replacement for the external ARM runtime input.
-
-Dino's original TypeScript sources are in `third_party/dino`. To regenerate its bundled JavaScript, install TypeScript and run `node bundle-dino.js` with `TYPESCRIPT_PATH` pointing to TypeScript's `lib/typescript.js`.
-
-## Validation
-
-The integration harness checks real browser rendering, home-page defaults, direct-address behavior, keyboard toggling, Shift/Enter, Android client hints, settings/cookie requests, default favorites, Dino canvas startup and saved preferences. See [tests](tests/README.md). Screen captures in `docs/` come from desktop testing; they do not show the Kindle system bar.
-
-## License
-
-Khromium's original code is MIT licensed. Chromium/Dino, jsmn and redistributed runtime components retain their own licenses. See `LICENSE`, `frontend/vendor/jsmn.h`, `third_party/dino/LICENSE`, and the release's `licenses/` directory.
+The source archive is included with this local distribution. Original code is MIT licensed; Chromium, jsmn and runtime components retain their own licenses. See `THIRD_PARTY_NOTICES.md` and the binary distribution's `licenses` directory.
