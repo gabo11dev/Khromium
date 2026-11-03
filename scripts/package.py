@@ -16,7 +16,7 @@ def sha(path):
 def copy(source,dest,mode=0o644):
  dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,dest);dest.chmod(mode)
 def source_files():
- return sorted(p for p in root.rglob('*') if p.is_file() and not any(s in ('build','.git','__pycache__') for s in p.relative_to(root).parts) and p.suffix not in ('.zip','.pyc','.core'))
+ return sorted(p for p in root.rglob('*') if p.is_file() and not any(s in ('build','.git','__pycache__') for s in p.relative_to(root).parts) and p.suffix not in ('.zip','.pyc','.core') and p.name!='bundle-dino.js' and 'third_party/dino' not in str(p.relative_to(root)) and not (p.relative_to(root).parts[0]=='assets' and p.name!='home.html'))
 with tempfile.TemporaryDirectory(prefix='khromium-package-') as temp:
  stage=Path(temp);app=stage/'extensions/khromium-sf'
  with zipfile.ZipFile(a.base) as base:
@@ -34,7 +34,7 @@ with tempfile.TemporaryDirectory(prefix='khromium-package-') as temp:
   target=app/'engine'/name;copy(a.engine_dir/name,target,0o755);patcher.patch(target,'/mnt/us/khromiumsfld.so')
  copy(root/'build/frontend-sf/khromium',app/'bin/khromium',0o755)
  for name in ('engine.sh','launch.sh','stop.sh','check.sh','orientation.sh'):copy(root/'scripts'/name,app/name,0o755)
- shutil.copytree(root/'assets',app/'assets')
+ copy(root/'assets/home.html',app/'assets/home.html')
  for name in ('README.md','LICENSE','THIRD_PARTY_NOTICES.md','CHANGELOG.md','VALIDATION.md'):copy(root/name,app/name)
  shutil.copytree(root/'docs',app/'docs')
  copy(root/'scripts/menu.json',app/'menu.json')
