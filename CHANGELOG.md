@@ -1,13 +1,12 @@
 # Changelog
 
-## Alpha 0.0.2
+## Khromium 156.0 SF Build 1 — Alpha
 
-- Increased keyboard key height from 68 to 96 pixels and enlarged key labels.
-- Removed the heading/preview bar above the keyboard. Use the toolbar Keyboard button to show or hide it.
-- Added ñ and uppercase Ñ, including UTF-8 backspace support.
-- Recreated the More menu with a Kindle-inspired white panel, large touch rows, separators and navigation chevrons.
-- Redrew the Reload icon with a circular arrow and a connected arrowhead.
-
-## Alpha 0.0.1
-
-Initial GTK2 Khromium interface, offline start page, search selection, history/favorites, settings, on-screen keyboard and native Kindle status-bar request.
+- First experimental frontend build for the legacy Kindle soft-float ABI, intended for PW3 firmware <= 5.16.2.1.1.
+- Uses the KOReader kindlepw2 compiler, `/lib/ld-linux.so.3`, base AAPCS/softfp and GLIBC symbols no newer than 2.9.
+- Separate SF application directory, engine loader and profile; preserves the PW4 installation.
+- Includes the newer in-window panels, radio selectors, independent scales, four orientations, Full Page, keyboard arrows, navigation and repaint changes.
+- Removed Chrome/Chromium Settings and Dino shortcuts; settings remain available through More.
+- Startup diagnostics and pinned build inputs included.
+- Chromium engine remains ARMhf in a separate process. No full soft-float Chromium rebuild is claimed.
+- ALPHA: no physical PW3 available; actual compatibility and kernel support remain unconfirmed.

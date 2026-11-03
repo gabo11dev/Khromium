@@ -1,20 +1,35 @@
-# Alpha 0.0.1 validation — 2026-11-03
+# Khromium 156.0 SF Build 1 — Alpha validation
 
-- GTK2 frontend compiled for ARMv7 hard-float/NEON and amd64 with warnings treated as errors. The ARM binary requires glibc symbol versions no newer than GLIBC_2.9.
-- Integration harness passed with native Chromium headless-shell 156.0.8078.79.
-- The same harness passed with the release ARM engine 156.0.8078.73, emulated as Cortex-A9 with Linux 4.1.15 ABI. Emulator-only process flags are not included in the Kindle launcher.
-- Verified local home title and initial WWW selection, direct-address/search resolution, bottom keyboard opening without a focused field, Shift and Enter delivered to a real web input, Android 11 user agent and mobile client hints, saved search/UA preferences, both initial favorite URLs, saving the current page, Settings creation, deleting an actual test cookie, and the bundled Dino canvas startup/Jump action.
-- Inspected desktop captures of home, keyboard, Settings and Favorites. Desktop captures do not include the Kindle system status bar.
-- The final ZIP's ARM engine returned `Chromium 156.0.8078.73` under emulation with the new `/mnt/us/khromiumld.so` interpreter and the packaged private libraries.
-- Packager checks that every engine/runtime NEEDED library is included, tests ZIP integrity, and writes an internal SHA256SUMS.txt. Launcher scripts passed shell syntax validation.
+Date: 2026-11-03. **No PW3 is available, and no physical PW3 was tested.**
+This document distinguishes emulator observations from device compatibility.
 
-Not yet verified on physical hardware: this new frontend's layout/touch behavior, the native Kindle clock/battery bar requested through `PC:T`, modeless dialog behavior and long-running memory use. The owner reported the earlier GTK2 prototype worked on the same PW4; that does not constitute a hardware test of this release.
+## Completed checks
 
+- Cross-compiled the production GTK2 frontend with KOReader kindlepw2 GCC 14.4.0, `-march=armv7-a -mfpu=neon -mfloat-abi=softfp`, and `-Wall -Wextra -Werror`.
+- ELF inspection confirms `/lib/ld-linux.so.3`, base ARM procedure-call ABI (no VFP-register argument ABI), ARMv7/NEON, and only GLIBC_2.4 / GLIBC_2.9 version requirements. This is a real SF frontend build, not a renamed ARMhf executable.
+- Protocol self-test passes with the SF binary under QEMU ARM Cortex-A9, with the reported kernel release set to 3.0.35.
+- Ran the real SF integration executable, old ARMEL GTK2 libraries and real ARMhf Chromium 156.0.8078.73 engine together under QEMU user-mode and native Xvfb. Both normal and Full Page test suites passed.
+- Normal suite: one visible GTK window, no combo boxes, radio selection, cookies deletion, saved settings, custom favorite preservation and retired internal-URL removal.
+- At 150% page scale, the engine reports devicePixelRatio 1.5 and the corresponding CSS viewport width. Independent UI scale persists; landscape at 150% UI scale retains page space.
+- Actual GTK toolbar taps go A → B → Back to A, Reload A (load count 2 → 3), then Forward to B. Reload closes an open panel.
+- The keyboard enters `hIñÑ`, deletes an extra character, sends Enter and all four Arrow events. Blur hides the keyboard, and the decoded page image fills the expanded viewport. Manually opened Down scrolls the page by 40 CSS pixels.
+- Full Page loads its own configured URL, hides the browser toolbar, automatically opens/closes the keyboard, types ñ, and exits through the two-second corner hold.
+- A recording substitute receives `eips -c`; a recording orientation helper verifies requests/restoration. No physical e-ink framebuffer or actual rotation was exercised.
+- Package construction checks private engine-library dependencies, checksums and ZIP integrity. The production package excludes development sysroots, compilers, profiles and test core dumps.
 
-# Alpha 0.0.2 validation — 2026-11-03
+## Important limits
 
-- ARMv7 and amd64 frontends compiled with warnings treated as errors.
-- Extended the integration test to press the actual visible keyboard buttons and enter `hIñÑ`, delete an additional character, and send Enter to a real Chromium input.
-- Verified the keyboard has no visible heading/preview bar, its key area is at least 390 pixels tall, and it still opens/closes independently of input focus.
-- Opened the new More menu and activated Settings through its real menu item. Existing cookies, preferences, favorites, UA and Dino integration checks still pass.
-- Inspected the rendered keyboard, menu and new Reload icon on the native test display. Physical Kindle appearance and native system status bar still require device confirmation.
+QEMU user-mode uses the host PC's kernel. `-r 3.0.35` changes the release reported
+to the emulated program; it does not emulate the PW3 kernel, its available
+syscalls, vendor changes, drivers or kernel helper page. The included engine
+runtime declares Linux 3.2, so compatibility with the PW3's older kernel remains
+unconfirmed. Emulator engine tests also use single-process/no-zygote/in-process
+GPU flags that are not part of the production launcher.
+
+The old GTK2 test runtime is from Debian Wheezy, not a PW3 firmware extraction.
+The device's exact GTK/GLib symbols, WM behavior, eips repaint, native status bar,
+orientation, touch input, HTTPS networking, available RAM, child processes and
+long-running behavior must still be tested on real hardware. A successful
+version/self-test check does not establish those properties.
+
+**Build 1 is an experimental alpha candidate, not a device-certified port.**
