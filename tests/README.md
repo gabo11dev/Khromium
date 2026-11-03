@@ -1,15 +1,22 @@
-# Integration test
+# RC1 integration tests
 
-Build the harness with the same GTK2 sysroot as the frontend:
+Build with:
 
 ```sh
 KHROMIUM_SOURCE=tests/integration.c KHROMIUM_BINARY=integration python3 frontend/build.py amd64
 ```
 
-`tests/run.py` starts Xvfb and runs a real Chromium headless-shell through the GTK2 frontend. Set `KHROMIUM_TEST_RUNTIME` to a local test fixture directory containing:
+Set `CHROMIUM_SRC` when using the Chromium GTK2 sysroot. Set `KHROMIUM_TEST_RUNTIME` to a fixture directory containing `test-runtime/root/usr/bin/Xvfb`, `test-runtime/root/usr/lib/x86_64-linux-gnu` and `official-engine/chrome-headless-shell-linux64/chrome-headless-shell`. Override `UI_TEST_ENGINE` to use another executable engine wrapper.
 
-- `test-runtime/root/usr/bin/Xvfb`
-- `test-runtime/root/usr/lib/x86_64-linux-gnu/` with Xvfb/GTK2 runtime dependencies
-- `official-engine/chrome-headless-shell-linux64/chrome-headless-shell`
+Run:
 
-Alternatively set `UI_TEST_ENGINE` to an executable ARM-emulation wrapper. Run `python3 tests/run.py`. Logs and captures are written to `build/test/`; profiles are temporary. The harness loads only local test pages and checks protocol results and saved state. It does not verify Kindle window-manager integration or physical touchscreen behavior.
+```sh
+python3 tests/run.py
+KHROMIUM_TEST_FULL=1 python3 tests/run.py
+```
+
+The tests start an isolated virtual display and real Chromium, use temporary profiles, and load only local pages. Normal mode checks in-window panels with no visible secondary windows or combo boxes, visible radio controls, both scales, real Back/Forward/Reload taps, arrow keys/scrolling, ñ/Ñ/Enter, automatic focus/blur, expanded screenshot height after keyboard close, cookies, preservation of custom favorites, retirement of removed internal pages, saved orientations and landscape layout at 150% UI scale.
+
+Full mode checks the configured startup URL, hidden toolbar, automatic keyboard opening/closing and the real two-second exit timer. Orientation is tested with a recording helper, and eips with an executable substitute in the test PATH: no real device framebuffer or system rotation is changed. The helper requests and restoration are checked after exit.
+
+Logs and captures are written to `build/test`. Hardware window-manager rotation and e-ink refresh require a Kindle test.
