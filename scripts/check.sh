@@ -2,7 +2,7 @@
 APP_DIR=$(CDPATH= cd -P "$(dirname "$0")" && pwd) || exit 1
 mkdir -p "$APP_DIR/state"
 {
-    echo 'Khromium Alpha 0.0.1 installation check'
+    echo 'Khromium 156.0 HF installation check'
     uname -a
     df -h /mnt/us
     free
