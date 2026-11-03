@@ -1,0 +1,23 @@
+{
+  "items": [
+    {
+      "name": "Khromium SF (Alpha)",
+      "items": [
+        {
+          "name": "Open Khromium",
+          "action": "sh ./launch.sh normal",
+          "exitmenu": true
+        },
+        {
+          "name": "Close Khromium",
+          "action": "sh ./stop.sh"
+        }
+      ]
+    },
+    {
+      "name": "Khromium SF Full Page",
+      "action": "sh ./launch.sh full-page",
+      "exitmenu": true
+    }
+  ]
+}
