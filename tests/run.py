@@ -30,5 +30,5 @@ assert len(values)==4,values
 assert values[0]['title']=='Khromium',values
 assert 'Android 11' in values[1]['ua'] and values[1]['mobile'],values
 assert values[2]['canvas'] and 'error' not in values[2]['status'].lower(),values
-assert values[3]['value']=='hI' and values[3]['enters']==1,values
+assert values[3]['value']=='hIñÑ' and values[3]['enters']==1,values
 print('PASS: home, direct addresses, keyboard toggle/Shift/Enter, user agent, favorites, settings, Dino, persistent preferences')
