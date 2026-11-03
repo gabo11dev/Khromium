@@ -42,7 +42,7 @@ with tempfile.TemporaryDirectory(prefix='khromium-package-') as temp:
   {'name':'Open Khromium','action':'sh ./launch.sh','exitmenu':True},
   {'name':'Stop Khromium','action':'sh ./stop.sh'},
   {'name':'Check installation','action':'sh ./check.sh'}]},indent=2)+'\n')
- (app/'config.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<extension><information><name>Khromium</name><version>Alpha 0.0.1</version><author>Khromium contributors (AI-assisted)</author></information><menus><menu type="json" dynamic="true">menu.json</menu></menus></extension>\n')
+ (app/'config.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<extension><information><name>Khromium</name><version>Alpha 0.0.2</version><author>Khromium contributors (AI-assisted)</author></information><menus><menu type="json" dynamic="true">menu.json</menu></menus></extension>\n')
  with zipfile.ZipFile(app/'Khromium-source.zip','w',zipfile.ZIP_DEFLATED) as sources:
   for path in source_files():sources.write(path,path.relative_to(root))
  missing={}
@@ -53,9 +53,9 @@ with tempfile.TemporaryDirectory(prefix='khromium-package-') as temp:
    if not (app/'runtime/lib'/name).is_file():missing.setdefault(name,[]).append(path.name)
  if missing:raise ValueError('Missing dependencies: '+json.dumps(missing))
  manifest={k:v for k,v in old.items() if k in ('engine','engine_package','engine_source','engine_deb_sha256','common_deb_sha256','runtime','kernel_abi_note')}
- manifest.update(name='Khromium',version='Alpha 0.0.1',interpreter='/mnt/us/khromiumld.so',frontend='GTK2 ARMv7 hard-float NEON',ai_assisted=True,hardware_tested=False,status='New UI tested with native and emulated ARM engines; physical Kindle status bar verification pending',sandbox=False,kindle_window_title='L:A_N:application_PC:T_ID:org.khromium.browser_O:U')
+ manifest.update(name='Khromium',version='Alpha 0.0.2',interpreter='/mnt/us/khromiumld.so',frontend='GTK2 ARMv7 hard-float NEON',ai_assisted=True,hardware_tested=False,status='New UI tested with native and emulated ARM engines; physical Kindle status bar verification pending',sandbox=False,kindle_window_title='L:A_N:application_PC:T_ID:org.khromium.browser_O:U')
  (app/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
- (stage/'INSTALL.txt').write_text('Khromium Alpha 0.0.1\n\nExtract this ZIP into the Kindle USB root. Keep khromiumld.so in the root and extensions/khromium as shown. Eject safely, then open Khromium from KUAL. Read extensions/khromium/README.md before use. Jailbroken PW4, firmware 5.17.1 and KUAL required.\n\nThis AI-assisted experimental browser runs without the Chromium sandbox. Avoid sensitive accounts and untrusted pages. New UI and native Kindle status bar still need physical device verification.\n')
+ (stage/'INSTALL.txt').write_text('Khromium Alpha 0.0.2\n\nExtract this ZIP into the Kindle USB root. Keep khromiumld.so in the root and extensions/khromium as shown. Eject safely, then open Khromium from KUAL. Read extensions/khromium/README.md before use. Jailbroken PW4, firmware 5.17.1 and KUAL required.\n\nThis AI-assisted experimental browser runs without the Chromium sandbox. Avoid sensitive accounts and untrusted pages. New UI and native Kindle status bar still need physical device verification.\n')
  (stage/'SHA256SUMS.txt').write_text(''.join(sha(p)+'  '+str(p.relative_to(stage))+'\n' for p in sorted(stage.rglob('*')) if p.is_file()))
  a.output.parent.mkdir(parents=True,exist_ok=True)
  with zipfile.ZipFile(a.output,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as out:
