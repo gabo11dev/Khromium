@@ -19,6 +19,11 @@ typedef struct {
     GtkWidget *window, *image, *viewport, *address, *status;
     GtkWidget *keyboard_panel, *keyboard_entry, *keyboard_rows, *ua_button;
     GtkWidget *keyboard_target, *more_menu, *settings_dialog, *settings_notice;
+    GtkWidget *content, *panel, *toolbar, *bar_separator;
+    gboolean full_page, keyboard_manual, keyboard_suppressed, web_editing, landscape;
+    int ui_scale, page_scale, orientation, full_orientation;
+    char *full_url, *orientation_helper, *restore_orientation;
+    guint focus_timer, hold_timer;
     GPtrArray *favorites, *visits;
     GKeyFile *preferences;
     char *assets, *prefs_path, *favorites_path, *visits_path, *homepage, *last_url, *last_title;
@@ -35,9 +40,12 @@ typedef struct {
     GByteArray *incoming, *outgoing;
     guint read_watch, write_watch, resize_timer, frame_timer, child_watch;
     pid_t child;
+    GPid refresh_pid;
     int read_fd, write_fd, next_id;
     int targets_id, create_id, attach_id, capture_id, history_id, history_step;
-    int width, height;
+    int width, height, metrics_id;
+    gboolean resize_dirty;
+    gint64 capture_started;
     gboolean alive, page_loaded;
     char *session, *initial_url;
 } Browser;
@@ -57,6 +65,14 @@ static void record_visit(const char *,const char *);
 static void save_preferences(void);
 static void toggle_keyboard(GtkWidget *,gpointer);
 static void home(GtkWidget *,gpointer);
+static void hide_keyboard(GtkWidget *,gpointer);
+static void panel_close(GtkWidget *,gpointer);
+static void apply_ui_scale(void);
+static void touch_size(GtkWidget *,int,int);
+static void touch_font(GtkWidget *,int);
+static void update_icon(GtkWidget *,int);
+static void orientation_apply(void);
+static const char *orientation_code(int);
 static volatile sig_atomic_t stopping;
 static void stop_signal(int signum) { (void)signum; stopping=1; }
 #ifdef BROWSER_TEST
@@ -82,7 +98,7 @@ static gboolean test_timeout(gpointer unused) {
 #endif
 
 static void notice(const char *text) {
-    if (app.status) {
+    if (app.status && !app.full_page) {
         gtk_label_set_text(GTK_LABEL(app.status), text);
         if (!strcmp(text,"Ready")) gtk_widget_hide(app.status); else gtk_widget_show(app.status);
     }
@@ -211,15 +227,14 @@ static int command(const char *method, const char *params, gboolean session) {
     return id;
 }
 static void loading(gboolean active) {
-    app.loading=active;
+    app.loading=active;if(active){app.page_loaded=FALSE;app.capture_id=0;}
     notice(active ? "Loading…" : "Ready");
 }
 static void navigate(const char *input) {
-    if (!strcmp(input,"chromium://settings") || !strcmp(input,"chrome://settings")) {
-        show_settings(NULL,NULL);return;
-    }
     char *url=page_url(input);
     if (!url) {notice("This address is not supported.");return;}
+    if(app.panel)panel_close(NULL,NULL);
+    hide_keyboard(NULL,NULL);app.keyboard_target=NULL;app.keyboard_manual=FALSE;app.web_editing=FALSE;app.keyboard_suppressed=FALSE;
     app.page_loaded=FALSE;
     char *quoted=quote(url);
     char *params=g_strdup_printf("{\"url\":%s}",quoted);
@@ -230,17 +245,20 @@ static void navigate(const char *input) {
 static gboolean dimensions(gpointer unused) {
     (void)unused;
     app.resize_timer=0;
-    char *p=g_strdup_printf("{\"width\":%d,\"height\":%d,\"deviceScaleFactor\":1,\"mobile\":false}",app.width,app.height);
-    command("Emulation.setDeviceMetricsOverride",p,TRUE);
+    double scale=app.page_scale/100.0;char scale_text[G_ASCII_DTOSTR_BUF_SIZE];g_ascii_dtostr(scale_text,sizeof(scale_text),scale);
+    char *p=g_strdup_printf("{\"width\":%d,\"height\":%d,\"deviceScaleFactor\":%s,\"mobile\":false}",MAX(1,(int)(app.width/scale)),MAX(1,(int)(app.height/scale)),scale_text);
+    app.capture_id=0;app.resize_dirty=TRUE;app.metrics_id=command("Emulation.setDeviceMetricsOverride",p,TRUE);
+    char *visible=g_strdup_printf("{\"width\":%d,\"height\":%d}",MAX(1,(int)(app.width/scale)),MAX(1,(int)(app.height/scale)));command("Emulation.setVisibleSize",visible,TRUE);g_free(visible);
     g_free(p);
     return FALSE;
 }
 static gboolean capture(gpointer unused) {
     (void)unused;
     if (stopping) { gtk_main_quit(); return TRUE; }
-    if (app.session && app.alive && app.page_loaded && !app.capture_id)
-        app.capture_id=command("Page.captureScreenshot",
-            "{\"format\":\"png\",\"fromSurface\":true,\"captureBeyondViewport\":false}",TRUE);
+    if(app.capture_id && g_get_monotonic_time()-app.capture_started>5000000){fprintf(stderr,"Recovering a stale page capture\n");app.capture_id=0;}
+    if (app.session && app.alive && app.page_loaded && !app.capture_id && !app.metrics_id)
+        {app.capture_started=g_get_monotonic_time();app.capture_id=command("Page.captureScreenshot",
+            "{\"format\":\"png\",\"fromSurface\":true,\"captureBeyondViewport\":false}",TRUE);}
     return TRUE;
 }
 static void show_frame(const char *encoded) {
@@ -282,7 +300,7 @@ static void message(const char *json, size_t length) {
     int result=member(json,tokens,n,0,"result");
 #ifdef BROWSER_TEST
     if (id) fprintf(stderr,"CDP reply %d (%zu bytes)\n",id,length);
-    if (g_getenv("GTK_UI_TEST_LOG") && length<8192) fprintf(stderr,"CDP JSON %.*s\n",(int)length,json);
+    if (g_getenv("GTK_UI_TEST_LOG") && length<8192 && !g_strstr_len(json,length,"\"data\":")) fprintf(stderr,"CDP JSON %.*s\n",(int)length,json);
 #endif
     int error=member(json,tokens,n,0,"error");
     if (error>=0) {
@@ -290,6 +308,9 @@ static void message(const char *json, size_t length) {
         fprintf(stderr,"Chromium command %d: %s\n",id,detail ? detail : "unknown error");
         g_free(detail);
         if (id==app.capture_id) app.capture_id=0;
+        if (id==app.focus_id) app.focus_id=0;
+        if (id==app.metrics_id)app.metrics_id=0;
+        if (id==app.history_id)app.history_id=0;
         if (id==app.ua_id) {
             app.ua_id=0;
             if (app.initial_navigation) navigate(app.initial_url);
@@ -320,6 +341,8 @@ static void message(const char *json, size_t length) {
         command("Runtime.addBinding","{\"name\":\"khromiumNavigate\"}",TRUE);
         dimensions(NULL);
         apply_user_agent(TRUE);
+    } else if(id && id==app.metrics_id){
+        app.metrics_id=0;capture(NULL);
     } else if (id && id==app.cookies_id) {
         app.cookies_id=0;notice("Cookies deleted.");
         if(app.settings_notice)gtk_label_set_text(GTK_LABEL(app.settings_notice),"Cookies deleted. Websites may sign you out.");
@@ -332,8 +355,12 @@ static void message(const char *json, size_t length) {
         app.focus_id=0;
         int remote=member(json,tokens,n,result,"result");
         int value=member(json,tokens,n,remote,"value");
-        if (value>=0 && tokens[value].end-tokens[value].start==4 && !strncmp(json+tokens[value].start,"true",4)) {
-            if (!GTK_WIDGET_VISIBLE(app.keyboard_panel) || app.keyboard_address) keyboard(NULL,NULL);
+        gboolean active=value>=0 && tokens[value].type==JSMN_PRIMITIVE && tokens[value].end-tokens[value].start==4 && !strncmp(json+tokens[value].start,"true",4);
+        gboolean changed=active!=app.web_editing;app.web_editing=active;
+        if(changed)app.keyboard_suppressed=FALSE;
+        if(!app.panel && !app.keyboard_target){
+            if(active && !app.keyboard_suppressed && !GTK_WIDGET_VISIBLE(app.keyboard_panel))keyboard(NULL,NULL);
+            if(!active && (changed || !app.keyboard_manual))hide_keyboard(NULL,NULL);
         }
     } else if (id && id==app.ua_id) {
         app.ua_id=0;
@@ -346,6 +373,7 @@ static void message(const char *json, size_t length) {
         app.capture_id=0;
         char *data=string_value(json,tokens,member(json,tokens,n,result,"data"));
         if (data) { show_frame(data); g_free(data); }
+        if(app.resize_dirty && !app.metrics_id){app.resize_dirty=FALSE;capture(NULL);}
     } else if (id && id==app.history_id) {
         int current=number(json,tokens,member(json,tokens,n,result,"currentIndex"));
         int list=member(json,tokens,n,result,"entries"), index=0;
@@ -354,7 +382,7 @@ static void message(const char *json, size_t length) {
                 if (index==current+app.history_step) {
                     int entry=number(json,tokens,member(json,tokens,n,i,"id"));
                     char *p=g_strdup_printf("{\"entryId\":%d}",entry);
-                    command("Page.navigateToHistoryEntry",p,TRUE); g_free(p); break;
+                    loading(TRUE);command("Page.navigateToHistoryEntry",p,TRUE); g_free(p); break;
                 }
             }
         }
@@ -381,7 +409,7 @@ static void message(const char *json, size_t length) {
         g_free(frame);
     }
     if (method>=0 && token_is(json,tokens+method,"Page.loadEventFired")) {
-        app.page_loaded=TRUE; loading(FALSE);
+        app.capture_id=0;app.page_loaded=TRUE; loading(FALSE);capture(NULL);
         app.title_id=command("Runtime.evaluate","{\"expression\":\"document.title\",\"returnByValue\":true}",TRUE);
     }
     if (method>=0 && token_is(json,tokens+method,"Page.frameNavigated")) {
@@ -495,37 +523,49 @@ static void open_address(GtkWidget *widget, gpointer unused) {
 }
 static void history(GtkWidget *widget, gpointer step) {
     (void)widget;
+    if(app.panel)panel_close(NULL,NULL);
     if (app.history_id) return;
     app.history_step=GPOINTER_TO_INT(step);
     app.history_id=command("Page.getNavigationHistory","{}",TRUE);
 }
 static void reload_page(GtkWidget *widget, gpointer unused) {
-    (void)widget; (void)unused; loading(TRUE); command("Page.reload","{}",TRUE);
+    (void)widget; (void)unused;if(app.panel)panel_close(NULL,NULL); loading(TRUE); command("Page.reload","{}",TRUE);
 }
 static void scroll_page(GtkWidget *widget, gpointer step) {
     (void)widget;
     char *p=g_strdup_printf("{\"type\":\"mouseWheel\",\"x\":%d,\"y\":%d,\"deltaX\":0,\"deltaY\":%d}",
-        app.width/2,app.height/2,GPOINTER_TO_INT(step)*(app.height*3/4));
+        (int)(app.width*50.0/app.page_scale),(int)(app.height*50.0/app.page_scale),(int)(GPOINTER_TO_INT(step)*app.height*75.0/app.page_scale));
     command("Input.dispatchMouseEvent",p,TRUE); g_free(p);
+}
+static gboolean hold_exit(gpointer unused){(void)unused;app.hold_timer=0;gtk_main_quit();return FALSE;}
+static gboolean page_motion(GtkWidget *widget,GdkEventMotion *event,gpointer unused){
+    (void)widget;(void)unused;if(app.hold_timer && (abs((int)(event->x-app.press_x))>25 || abs((int)(event->y-app.press_y))>25)){g_source_remove(app.hold_timer);app.hold_timer=0;}return FALSE;
+}
+static void request_focus(void){
+    const char *expression="(()=>{const e=document.activeElement;if(!e || e.disabled || e.readOnly)return false;if(e.isContentEditable || e.tagName==='TEXTAREA')return true;return e.tagName==='INPUT' && !/^(button|submit|reset|checkbox|radio|range|color|file|hidden)$/.test(e.type);})()";
+    char *q=quote(expression),*p=g_strdup_printf("{\"expression\":%s,\"returnByValue\":true}",q);app.focus_id=command("Runtime.evaluate",p,TRUE);g_free(q);g_free(p);
+}
+static gboolean poll_focus(gpointer unused){
+    (void)unused;if(app.session && app.page_loaded && !app.panel && !app.keyboard_target && !app.focus_id)request_focus();return TRUE;
 }
 static gboolean click_page(GtkWidget *widget,GdkEventButton *event,gpointer unused) {
     (void)widget;(void)unused;
     if(event->button!=1)return FALSE;
-    if(event->type==GDK_BUTTON_PRESS){app.pressed=TRUE;app.press_x=event->x;app.press_y=event->y;return TRUE;}
+    if(event->type==GDK_BUTTON_PRESS){app.pressed=TRUE;app.press_x=event->x;app.press_y=event->y;if(app.full_page && event->x<60 && event->y<60)app.hold_timer=g_timeout_add(2000,hold_exit,NULL);return TRUE;}
     if(event->type!=GDK_BUTTON_RELEASE || !app.pressed)return FALSE;
-    app.pressed=FALSE;
+    app.pressed=FALSE;if(app.hold_timer){g_source_remove(app.hold_timer);app.hold_timer=0;}
     int x=CLAMP((int)event->x,0,app.width-1),y=CLAMP((int)event->y,0,app.height-1);
     if(abs((int)(event->y-app.press_y))>45) {
-        char *p=g_strdup_printf("{\"type\":\"mouseWheel\",\"x\":%d,\"y\":%d,\"deltaX\":0,\"deltaY\":%d}",x,y,(int)(app.press_y-event->y));
+        char *p=g_strdup_printf("{\"type\":\"mouseWheel\",\"x\":%d,\"y\":%d,\"deltaX\":0,\"deltaY\":%d}",(int)(x*100.0/app.page_scale),(int)(y*100.0/app.page_scale),(int)((app.press_y-event->y)*100.0/app.page_scale));
         command("Input.dispatchMouseEvent",p,TRUE);g_free(p);return TRUE;
     }
     const char *types[]={"mousePressed","mouseReleased"};
     for(guint i=0;i<2;++i){
-        char *p=g_strdup_printf("{\"type\":\"%s\",\"x\":%d,\"y\":%d,\"button\":\"left\",\"clickCount\":1}",types[i],x,y);
+        char *p=g_strdup_printf("{\"type\":\"%s\",\"x\":%d,\"y\":%d,\"button\":\"left\",\"clickCount\":1}",types[i],(int)(x*100.0/app.page_scale),(int)(y*100.0/app.page_scale));
         command("Input.dispatchMouseEvent",p,TRUE);g_free(p);
     }
-    app.keyboard_target=NULL;
-    app.focus_id=command("Runtime.evaluate","{\"expression\":\"Boolean(document.activeElement && ((document.activeElement.tagName === 'INPUT' && !/^(button|submit|reset|checkbox|radio|range|color|file|hidden)$/.test(document.activeElement.type)) || document.activeElement.tagName === 'TEXTAREA' || document.activeElement.isContentEditable))\",\"returnByValue\":true}",TRUE);
+    app.keyboard_target=NULL;app.keyboard_manual=FALSE;app.keyboard_suppressed=FALSE;
+    request_focus();
     return TRUE;
 }
 static gboolean scroll_event(GtkWidget *w,GdkEventScroll *event,gpointer unused){
@@ -559,12 +599,17 @@ static void keyboard_key(GtkWidget *widget, gpointer unused) {
     (void)unused;
     const char *key=gtk_button_get_label(GTK_BUTTON(widget));
     if (!strcmp(key,"Shift")) { app.uppercase=!app.uppercase; rebuild_keys(); return; }
-    if (!strcmp(key,"123 / #+=" ) || !strcmp(key,"ABC")) {
+    if (!strcmp(key,"123") || !strcmp(key,"123 / #+=" ) || !strcmp(key,"ABC")) {
         app.symbols=!app.symbols; rebuild_keys(); return;
     }
     if (!strcmp(key,"Hide")) { hide_keyboard(NULL,NULL); return; }
     GtkWidget *target=app.keyboard_target;
     if(target && !GTK_IS_ENTRY(target))target=NULL;
+    if(!strcmp(key,"↑") || !strcmp(key,"↓") || !strcmp(key,"←") || !strcmp(key,"→")){
+        int direction=!strcmp(key,"↑")?0:!strcmp(key,"↓")?1:!strcmp(key,"←")?2:3;
+        if(target){int pos=gtk_editable_get_position(GTK_EDITABLE(target)),length=g_utf8_strlen(gtk_entry_get_text(GTK_ENTRY(target)),-1);gtk_editable_set_position(GTK_EDITABLE(target),direction==0?0:direction==1?length:CLAMP(pos+(direction==2?-1:1),0,length));}
+        else{const char *keys[]={"ArrowUp","ArrowDown","ArrowLeft","ArrowRight"};const int codes[]={38,40,37,39};send_key(keys[direction],keys[direction],codes[direction]);}return;
+    }
     const char *old=gtk_entry_get_text(GTK_ENTRY(app.keyboard_entry));
     if (!strcmp(key,"Clear")) {
         if(target){gtk_entry_set_text(GTK_ENTRY(target),"");gtk_entry_set_text(GTK_ENTRY(app.keyboard_entry),"");}
@@ -605,9 +650,8 @@ static void keyboard_key(GtkWidget *widget, gpointer unused) {
 }
 static void key_button(GtkWidget *row, const char *label) {
     GtkWidget *key=gtk_button_new_with_label(label);
-    gtk_widget_set_size_request(key,-1,96);
-    PangoFontDescription *font=pango_font_description_from_string("Sans 22");
-    gtk_widget_modify_font(gtk_bin_get_child(GTK_BIN(key)),font);pango_font_description_free(font);
+    touch_size(key,-1,app.landscape?64:96);
+    touch_font(gtk_bin_get_child(GTK_BIN(key)),22);
     gtk_button_set_focus_on_click(GTK_BUTTON(key),FALSE);
     gtk_box_pack_start(GTK_BOX(row),key,TRUE,TRUE,0);
     g_signal_connect(key,"clicked",G_CALLBACK(keyboard_key),NULL);
@@ -631,8 +675,10 @@ static void rebuild_keys(void) {
     }
     GtkWidget *row=gtk_hbox_new(FALSE,3);
     gtk_box_pack_start(GTK_BOX(app.keyboard_rows),row,FALSE,FALSE,2);
-    key_button(row,"Shift"); key_button(row,app.symbols ? "ABC" : "123 / #+=");
+    key_button(row,"Shift"); key_button(row,app.symbols ? "ABC" : "123");
     key_button(row,"Space"); key_button(row,"Backspace"); key_button(row,"Enter");
+    row=gtk_hbox_new(TRUE,3);gtk_box_pack_start(GTK_BOX(app.keyboard_rows),row,FALSE,FALSE,2);
+    const char *arrows[]={"←","↑","↓","→"};for(int i=0;i<4;++i){key_button(row,arrows[i]);GList *keys=gtk_container_get_children(GTK_CONTAINER(row));touch_size(g_list_last(keys)->data,-1,app.landscape?48:64);g_list_free(keys);}
     gtk_widget_show_all(app.keyboard_rows);
 }
 static void keyboard(GtkWidget *widget,gpointer address_mode) {
@@ -644,32 +690,30 @@ static void keyboard(GtkWidget *widget,gpointer address_mode) {
 }
 static void toggle_keyboard(GtkWidget *widget,gpointer unused) {
     (void)widget;(void)unused;
-    if(GTK_WIDGET_VISIBLE(app.keyboard_panel))hide_keyboard(NULL,NULL);
-    else keyboard(NULL,GINT_TO_POINTER(app.keyboard_target==app.address));
+    if(GTK_WIDGET_VISIBLE(app.keyboard_panel)){hide_keyboard(NULL,NULL);app.keyboard_manual=FALSE;app.keyboard_suppressed=app.web_editing;}
+    else{app.keyboard_manual=TRUE;app.keyboard_suppressed=FALSE;keyboard(NULL,GINT_TO_POINTER(app.keyboard_target==app.address));}
 }
 static gboolean entry_tapped(GtkWidget *widget,GdkEventButton *event,gpointer unused) {
     (void)unused;
-    if(event->type==GDK_BUTTON_PRESS){app.keyboard_target=widget;keyboard(NULL,GINT_TO_POINTER(widget==app.address));}
+    if(event->type==GDK_BUTTON_PRESS){app.keyboard_manual=FALSE;app.keyboard_target=widget;keyboard(NULL,GINT_TO_POINTER(widget==app.address));}
     return FALSE;
 }
 static void apply_user_agent(gboolean initial) {
     app.initial_navigation=initial;
     gboolean mobile=app.ua_next==1;
     const char *ua=mobile ?
-        "Mozilla/5.0 (Linux; Android 11; Kindle PW4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36" :
+        "Mozilla/5.0 (Linux; Android 11; Kindle PW3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36" :
         "Mozilla/5.0 (X11; Debian 13; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36";
     char *q=quote(ua);
     char *params=g_strdup_printf("{\"userAgent\":%s,\"platform\":\"Linux armv7l\",\"acceptLanguage\":\"en-US,en;q=0.9\",\"userAgentMetadata\":{\"brands\":[{\"brand\":\"Chromium\",\"version\":\"156\"}],\"fullVersionList\":[{\"brand\":\"Chromium\",\"version\":\"156.0.8078.73\"}],\"fullVersion\":\"156.0.8078.73\",\"platform\":\"%s\",\"platformVersion\":\"%s\",\"architecture\":\"arm\",\"model\":\"%s\",\"mobile\":%s,\"bitness\":\"32\",\"wow64\":false}}",
-        q,mobile ? "Android" : "Linux",mobile ? "11.0.0" : "13.0.0",mobile ? "Kindle PW4" : "",mobile ? "true" : "false");
+        q,mobile ? "Android" : "Linux",mobile ? "11.0.0" : "13.0.0",mobile ? "Kindle PW3" : "",mobile ? "true" : "false");
     app.ua_id=command("Emulation.setUserAgentOverride",params,TRUE);
     g_free(q); g_free(params);
 }
 static gboolean draw_page(GtkWidget *widget,GdkEventExpose *event,gpointer unused) {
     (void)unused;
-    if (app.frame) gdk_draw_pixbuf(widget->window,widget->style->fg_gc[GTK_STATE_NORMAL],app.frame,
-        event->area.x,event->area.y,event->area.x,event->area.y,
-        MAX(0,MIN(event->area.width,gdk_pixbuf_get_width(app.frame)-event->area.x)),
-        MAX(0,MIN(event->area.height,gdk_pixbuf_get_height(app.frame)-event->area.y)),GDK_RGB_DITHER_NONE,0,0);
+    cairo_t *c=gdk_cairo_create(widget->window);cairo_rectangle(c,event->area.x,event->area.y,event->area.width,event->area.height);cairo_clip(c);cairo_set_source_rgb(c,1,1,1);cairo_paint(c);
+    if(app.frame){cairo_scale(c,(double)widget->allocation.width/gdk_pixbuf_get_width(app.frame),(double)widget->allocation.height/gdk_pixbuf_get_height(app.frame));gdk_cairo_set_source_pixbuf(c,app.frame,0,0);cairo_paint(c);}cairo_destroy(c);
     return FALSE;
 }
 static void quit(GtkWidget *widget, gpointer unused) {
@@ -677,12 +721,9 @@ static void quit(GtkWidget *widget, gpointer unused) {
 }
 static GtkWidget *button(GtkWidget *row,const char *label,GCallback callback,gpointer data) {
     GtkWidget *b=gtk_button_new_with_label(label);
-    GtkRequisition size;
-    GtkWidget *text=gtk_bin_get_child(GTK_BIN(b));
-    gtk_widget_ensure_style(text);
-    gtk_widget_size_request(text,&size);
-    gtk_widget_set_size_request(b,MAX(72,MAX(size.width+24,(int)g_utf8_strlen(label,-1)*16+24)),72);
-    gtk_box_pack_start(GTK_BOX(row),b,FALSE,FALSE,1);
+    touch_font(gtk_bin_get_child(GTK_BIN(b)),18);gtk_label_set_line_wrap(GTK_LABEL(gtk_bin_get_child(GTK_BIN(b))),TRUE);
+    touch_size(b,72,64);gtk_button_set_focus_on_click(GTK_BUTTON(b),FALSE);
+    gtk_box_pack_start(GTK_BOX(row),b,TRUE,TRUE,2);
     g_signal_connect(b,"clicked",callback,data); return b;
 }
 #include "shell.inc"
@@ -712,6 +753,7 @@ int main(int argc,char **argv) {
         else if (!strcmp(argv[i],"--assets") && i+1<argc) assets=argv[++i];
         else if (!strcmp(argv[i],"--url") && i+1<argc) url=argv[++i];
         else if (!strcmp(argv[i],"--unsafe-no-sandbox")) unsafe=TRUE;
+        else if (!strcmp(argv[i],"--full-page")) app.full_page=TRUE;
 #ifdef BROWSER_TEST
         else if (!strcmp(argv[i],"--test-screenshot") && i+1<argc) test_screenshot=argv[++i];
 #endif
@@ -738,16 +780,22 @@ int main(int argc,char **argv) {
     app.width=1072; app.height=1300; app.read_fd=-1; app.write_fd=-1;
     app.incoming=g_byte_array_new(); app.outgoing=g_byte_array_new();
     app.assets=g_strdup(assets);load_state(profile);
-    app.initial_url=g_strdup(url ? url : app.homepage);
+    app.orientation_helper=g_strdup(g_getenv("KHROMIUM_ORIENTATION_HELPER"));
+    app.restore_orientation=g_strdup(g_getenv("KHROMIUM_ORIENTATION_PREVIOUS"));
+    app.initial_url=g_strdup(url ? url : app.full_page ? app.full_url : app.homepage);
     app.last_url=g_strdup(app.initial_url);app.last_title=g_strdup("Khromium");
     app.ua_next=app.ua;
     build_window();
+    orientation_apply();
     if (!launch_engine(engine,profile,unsafe)) notice("Could not start the browser engine.");
     app.frame_timer=g_timeout_add(1000,capture,NULL);
+    app.focus_timer=g_timeout_add(500,poll_focus,NULL);
 #ifdef BROWSER_TEST
     if (test_screenshot) g_timeout_add_seconds(120,test_timeout,NULL);
 #endif
     gtk_main();
+    if (app.focus_timer)g_source_remove(app.focus_timer);
+    if (app.hold_timer)g_source_remove(app.hold_timer);
     if (app.frame_timer) g_source_remove(app.frame_timer);
     if (app.resize_timer) g_source_remove(app.resize_timer);
     if (app.read_watch) g_source_remove(app.read_watch);
@@ -765,6 +813,8 @@ int main(int argc,char **argv) {
     save_preferences();save_pages(app.favorites,app.favorites_path);save_pages(app.visits,app.visits_path);
     g_ptr_array_free(app.favorites,TRUE);g_ptr_array_free(app.visits,TRUE);g_key_file_free(app.preferences);
     g_free(app.assets);g_free(app.prefs_path);g_free(app.favorites_path);g_free(app.visits_path);g_free(app.homepage);g_free(app.last_url);g_free(app.last_title);
+    if(app.orientation_helper && app.restore_orientation && strlen(app.restore_orientation)==1 && strchr("UDLR",app.restore_orientation[0])){char *args[]={app.orientation_helper,"set",app.restore_orientation,NULL};g_spawn_sync(NULL,args,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL);}
+    g_free(app.orientation_helper);g_free(app.restore_orientation);g_free(app.full_url);
     if (app.frame) g_object_unref(app.frame);
 #ifdef BROWSER_TEST
     if (test_screenshot) return test_result;

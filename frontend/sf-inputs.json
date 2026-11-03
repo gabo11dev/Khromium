@@ -1,0 +1,513 @@
+{
+  "toolchain": {
+    "url": "https://github.com/koreader/koxtoolchain/releases/download/2026.08/kindlepw2.tar.zst",
+    "sha256": "84bc8b4143796ba0c9e6306aefc596ca2e2685cf9174a285bb14f36425de8104",
+    "filename": "kindlepw2.tar.zst"
+  },
+  "packages": [
+    {
+      "name": "libatk1.0-0",
+      "version": "2.4.0-2",
+      "filename": "libatk1.0-0_2.4.0-2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/a/atk1.0/libatk1.0-0_2.4.0-2_armel.deb",
+      "sha256": "618f82329693abe63cffa9a4cfd0588f5b6f20bcdb35d4fff01e5c6fd955c4a2"
+    },
+    {
+      "name": "libatk1.0-dev",
+      "version": "2.4.0-2",
+      "filename": "libatk1.0-dev_2.4.0-2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/a/atk1.0/libatk1.0-dev_2.4.0-2_armel.deb",
+      "sha256": "4985108b8ded3609801cec550c0ae94128005967f30e09d346a04ee9ca52fbca"
+    },
+    {
+      "name": "libbz2-1.0",
+      "version": "1.0.6-4",
+      "filename": "libbz2-1.0_1.0.6-4_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/b/bzip2/libbz2-1.0_1.0.6-4_armel.deb",
+      "sha256": "5a843865372f82b41e70ce9b5d0acb41ad0a7e03fec000759792f274bb911ca2"
+    },
+    {
+      "name": "libc6",
+      "version": "2.13-38+deb7u10",
+      "filename": "libc6_2.13-38+deb7u10_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/e/eglibc/libc6_2.13-38+deb7u10_armel.deb",
+      "sha256": "d736fab6fde1e9501fb678906b1facfdc1717dc6f56000b1dd71425f0c4fa92a"
+    },
+    {
+      "name": "libcairo2-dev",
+      "version": "1.12.2-3",
+      "filename": "libcairo2-dev_1.12.2-3_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/c/cairo/libcairo2-dev_1.12.2-3_armel.deb",
+      "sha256": "31a5c1f3cd04595a3f9869c3d40017422a0f1d83fe11fe43d7d8e0954f37330f"
+    },
+    {
+      "name": "libcairo2",
+      "version": "1.12.2-3",
+      "filename": "libcairo2_1.12.2-3_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/c/cairo/libcairo2_1.12.2-3_armel.deb",
+      "sha256": "06b65b380b43a272ce6bdbfcc87e95ccd1044d9f5f83710026b4d10bd4a09373"
+    },
+    {
+      "name": "libexpat1",
+      "version": "2.1.0-1+deb7u2",
+      "filename": "libexpat1_2.1.0-1+deb7u2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/e/expat/libexpat1_2.1.0-1+deb7u2_armel.deb",
+      "sha256": "bb6aa62b37533f287dfc23f64e02e5828e3062a5f7c3dedda34632227b020f18"
+    },
+    {
+      "name": "libffi5",
+      "version": "3.0.10-3",
+      "filename": "libffi5_3.0.10-3_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libf/libffi/libffi5_3.0.10-3_armel.deb",
+      "sha256": "8299b46a09b8acb631c90e06943bf9f94ebb3749ac0e5be5cadc5d09965d5c06"
+    },
+    {
+      "name": "libfontconfig1-dev",
+      "version": "2.9.0-7.1",
+      "filename": "libfontconfig1-dev_2.9.0-7.1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/f/fontconfig/libfontconfig1-dev_2.9.0-7.1_armel.deb",
+      "sha256": "fbccb74ff9d7f88ada40793605cd8f0e8b006484872c0f4e81527ca6e0f137e6"
+    },
+    {
+      "name": "libfontconfig1",
+      "version": "2.9.0-7.1",
+      "filename": "libfontconfig1_2.9.0-7.1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/f/fontconfig/libfontconfig1_2.9.0-7.1_armel.deb",
+      "sha256": "148681c877b6ca9490685e071b933d1b81c4725cb5627a777c2c0bc34dc0498a"
+    },
+    {
+      "name": "libfreetype6-dev",
+      "version": "2.4.9-1.1+deb7u3",
+      "filename": "libfreetype6-dev_2.4.9-1.1+deb7u3_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/f/freetype/libfreetype6-dev_2.4.9-1.1+deb7u3_armel.deb",
+      "sha256": "eaf430a30e5766e442a3d27c52f854384a78c08adc13ea1644e2bf97a850d442"
+    },
+    {
+      "name": "libfreetype6",
+      "version": "2.4.9-1.1+deb7u3",
+      "filename": "libfreetype6_2.4.9-1.1+deb7u3_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/f/freetype/libfreetype6_2.4.9-1.1+deb7u3_armel.deb",
+      "sha256": "11891c0257d0f8ed3faefebc5398ec8a9b353f6c156d18b71b4dfce981caf1b4"
+    },
+    {
+      "name": "libgcc1",
+      "version": "1:4.7.2-5",
+      "filename": "libgcc1_1%3a4.7.2-5_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/g/gcc-4.7/libgcc1_4.7.2-5_armel.deb",
+      "sha256": "036696263e1546ad7abd816540622b3e44ddc86d27d1722b5c45a0a765fa4c18"
+    },
+    {
+      "name": "libgdk-pixbuf2.0-0",
+      "version": "2.26.1-1+deb7u3",
+      "filename": "libgdk-pixbuf2.0-0_2.26.1-1+deb7u3_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/g/gdk-pixbuf/libgdk-pixbuf2.0-0_2.26.1-1+deb7u3_armel.deb",
+      "sha256": "4feeff0c725d1783542692bbf47d532c1f62111b9bff6baa4c39b50e4aec16ba"
+    },
+    {
+      "name": "libgdk-pixbuf2.0-dev",
+      "version": "2.26.1-1+deb7u3",
+      "filename": "libgdk-pixbuf2.0-dev_2.26.1-1+deb7u3_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/g/gdk-pixbuf/libgdk-pixbuf2.0-dev_2.26.1-1+deb7u3_armel.deb",
+      "sha256": "b00740d65907dd16ed8d839de36ba001d5b245498ec5cedbdb74dce181b3d90b"
+    },
+    {
+      "name": "libglib2.0-0",
+      "version": "2.33.12+really2.32.4-5",
+      "filename": "libglib2.0-0_2.33.12+really2.32.4-5_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/g/glib2.0/libglib2.0-0_2.33.12+really2.32.4-5_armel.deb",
+      "sha256": "be1b03c68d827613cbbfc7b5552d6b7afbc259371d15d28d69706a95d813adf6"
+    },
+    {
+      "name": "libglib2.0-dev",
+      "version": "2.33.12+really2.32.4-5",
+      "filename": "libglib2.0-dev_2.33.12+really2.32.4-5_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/g/glib2.0/libglib2.0-dev_2.33.12+really2.32.4-5_armel.deb",
+      "sha256": "fce9eb5ee1b697d2befe618f30bc569a75b8b341699d179567d66dbe88399ec1"
+    },
+    {
+      "name": "libgtk2.0-0",
+      "version": "2.24.10-2",
+      "filename": "libgtk2.0-0_2.24.10-2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/g/gtk+2.0/libgtk2.0-0_2.24.10-2_armel.deb",
+      "sha256": "83c93971f72a834ad071d34190dbdfa7f18c29b3c33b342ecde30ef939034e56"
+    },
+    {
+      "name": "libgtk2.0-dev",
+      "version": "2.24.10-2",
+      "filename": "libgtk2.0-dev_2.24.10-2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/g/gtk+2.0/libgtk2.0-dev_2.24.10-2_armel.deb",
+      "sha256": "561eef4117f60e2c813b9fa1ff8e3463ff86eaddeac47ba19410560824f55883"
+    },
+    {
+      "name": "libpango1.0-0",
+      "version": "1.30.0-1",
+      "filename": "libpango1.0-0_1.30.0-1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/p/pango1.0/libpango1.0-0_1.30.0-1_armel.deb",
+      "sha256": "d0d619676675be0fbd65406649e15ec8c55f7f829592fb56ef25b048c1e68d93"
+    },
+    {
+      "name": "libpango1.0-dev",
+      "version": "1.30.0-1",
+      "filename": "libpango1.0-dev_1.30.0-1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/p/pango1.0/libpango1.0-dev_1.30.0-1_armel.deb",
+      "sha256": "0e2ac1ea3376a82dcc10552c2f876aaf351ae0c2c74e52b2ccd60d7442fa3733"
+    },
+    {
+      "name": "libpcre3-dev",
+      "version": "1:8.30-5",
+      "filename": "libpcre3-dev_1%3a8.30-5_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/p/pcre3/libpcre3-dev_8.30-5_armel.deb",
+      "sha256": "7b52d3a005faa2dfb74a569e80592dae7310daebb98d5cf35b11b2c223b97289"
+    },
+    {
+      "name": "libpcre3",
+      "version": "1:8.30-5",
+      "filename": "libpcre3_1%3a8.30-5_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/p/pcre3/libpcre3_8.30-5_armel.deb",
+      "sha256": "123407aadb510dd44379747661fa675cfb609e72cf94ece2a29a3383a14ab6ba"
+    },
+    {
+      "name": "libpixman-1-0",
+      "version": "0.26.0-4+deb7u2",
+      "filename": "libpixman-1-0_0.26.0-4+deb7u2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/p/pixman/libpixman-1-0_0.26.0-4+deb7u2_armel.deb",
+      "sha256": "7e517cdf3c17f50ac937f60cb962ba24fe7ef897d15e7542722d0da6acf0120a"
+    },
+    {
+      "name": "libpixman-1-dev",
+      "version": "0.26.0-4+deb7u2",
+      "filename": "libpixman-1-dev_0.26.0-4+deb7u2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/p/pixman/libpixman-1-dev_0.26.0-4+deb7u2_armel.deb",
+      "sha256": "bcadc06efcbd57e1db2c85f739efc93b315222f353a5ba372e02c789be0a3ba2"
+    },
+    {
+      "name": "libpng12-0",
+      "version": "1.2.49-1+deb7u2",
+      "filename": "libpng12-0_1.2.49-1+deb7u2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libp/libpng/libpng12-0_1.2.49-1+deb7u2_armel.deb",
+      "sha256": "c1cbffcfc6979ff57a9606da4ff793e31784ef6c19b356cd413002c9c98b9c7c"
+    },
+    {
+      "name": "libpng12-dev",
+      "version": "1.2.49-1+deb7u2",
+      "filename": "libpng12-dev_1.2.49-1+deb7u2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libp/libpng/libpng12-dev_1.2.49-1+deb7u2_armel.deb",
+      "sha256": "05971c875ae33770047991d6f055fd7100738d3266e90e5efd9586085d4f8ba9"
+    },
+    {
+      "name": "libpthread-stubs0-dev",
+      "version": "0.3-3",
+      "filename": "libpthread-stubs0-dev_0.3-3_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libp/libpthread-stubs/libpthread-stubs0-dev_0.3-3_armel.deb",
+      "sha256": "c201803fd48204a83c97797307028d5ecfdee8146ead59a94b0bd0fe4981ab38"
+    },
+    {
+      "name": "libpthread-stubs0",
+      "version": "0.3-3",
+      "filename": "libpthread-stubs0_0.3-3_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libp/libpthread-stubs/libpthread-stubs0_0.3-3_armel.deb",
+      "sha256": "fb070d29287aace9114420f2d53736568cda839a77d5cbd626c47604887f9292"
+    },
+    {
+      "name": "libselinux1",
+      "version": "2.1.9-5",
+      "filename": "libselinux1_2.1.9-5_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libs/libselinux/libselinux1_2.1.9-5_armel.deb",
+      "sha256": "522adcfff6596dfa49994d41426a14ff3eeed0333e6392f9059b6139273ef9ed"
+    },
+    {
+      "name": "libstdc++6",
+      "version": "4.7.2-5",
+      "filename": "libstdc++6_4.7.2-5_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/g/gcc-4.7/libstdc++6_4.7.2-5_armel.deb",
+      "sha256": "57b24df582f0e21be4bfe41f53f63da7c018e5215c49d6517f39cbf9d5f2579a"
+    },
+    {
+      "name": "libx11-6",
+      "version": "2:1.5.0-1+deb7u2",
+      "filename": "libx11-6_2%3a1.5.0-1+deb7u2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libx11/libx11-6_1.5.0-1+deb7u2_armel.deb",
+      "sha256": "c9f69b58dd68ef9d236d0602e92614efa39df1758afee7ebed2b8a23325d99c0"
+    },
+    {
+      "name": "libx11-dev",
+      "version": "2:1.5.0-1+deb7u2",
+      "filename": "libx11-dev_2%3a1.5.0-1+deb7u2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libx11/libx11-dev_1.5.0-1+deb7u2_armel.deb",
+      "sha256": "273638a4d98f2a152791891dd3b2f2e4add5b98bd3ebb2682bc713e30224a7dc"
+    },
+    {
+      "name": "libxau-dev",
+      "version": "1:1.0.7-1",
+      "filename": "libxau-dev_1%3a1.0.7-1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxau/libxau-dev_1.0.7-1_armel.deb",
+      "sha256": "5241bcd66e9bcd0598731205ef2ed313aa3fd5e450c6b368fbb15799af358d50"
+    },
+    {
+      "name": "libxau6",
+      "version": "1:1.0.7-1",
+      "filename": "libxau6_1%3a1.0.7-1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxau/libxau6_1.0.7-1_armel.deb",
+      "sha256": "529a4393d0f398d3b530463e61ff6339c3edf836b08bc1609bb5c44f3c70c7e0"
+    },
+    {
+      "name": "libxcb-render0-dev",
+      "version": "1.8.1-2+deb7u1",
+      "filename": "libxcb-render0-dev_1.8.1-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcb/libxcb-render0-dev_1.8.1-2+deb7u1_armel.deb",
+      "sha256": "6eaa609d4809031d344b640d4f222955b7fb2b9da560d13f76ad8715cd839ddd"
+    },
+    {
+      "name": "libxcb-render0",
+      "version": "1.8.1-2+deb7u1",
+      "filename": "libxcb-render0_1.8.1-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcb/libxcb-render0_1.8.1-2+deb7u1_armel.deb",
+      "sha256": "a7516ea1345879192106342989cbdc59c4ca59c870c31a620592e77462562271"
+    },
+    {
+      "name": "libxcb-shm0-dev",
+      "version": "1.8.1-2+deb7u1",
+      "filename": "libxcb-shm0-dev_1.8.1-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcb/libxcb-shm0-dev_1.8.1-2+deb7u1_armel.deb",
+      "sha256": "5cc87c4bde1a1cc6bf1a10df2422071f52526c2dbff1d851f90846b5154e59fd"
+    },
+    {
+      "name": "libxcb-shm0",
+      "version": "1.8.1-2+deb7u1",
+      "filename": "libxcb-shm0_1.8.1-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcb/libxcb-shm0_1.8.1-2+deb7u1_armel.deb",
+      "sha256": "dc58db9beb6c99ad7e2ae623a119ad510601ac44e3c3470e906254b0877d9a47"
+    },
+    {
+      "name": "libxcb1-dev",
+      "version": "1.8.1-2+deb7u1",
+      "filename": "libxcb1-dev_1.8.1-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcb/libxcb1-dev_1.8.1-2+deb7u1_armel.deb",
+      "sha256": "d44b9b9b587e55e6083e93de27ca9db1d50da539b25d384bdf8a944d39ba9f33"
+    },
+    {
+      "name": "libxcb1",
+      "version": "1.8.1-2+deb7u1",
+      "filename": "libxcb1_1.8.1-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcb/libxcb1_1.8.1-2+deb7u1_armel.deb",
+      "sha256": "d314bc5d6e01904c48d1c2411d8223d36042e9b698bd7988c94b1011f11ff5c1"
+    },
+    {
+      "name": "libxcomposite-dev",
+      "version": "1:0.4.3-2",
+      "filename": "libxcomposite-dev_1%3a0.4.3-2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcomposite/libxcomposite-dev_0.4.3-2_armel.deb",
+      "sha256": "b3466145015054826a26689ccc02d491309ed671eb298de376939ea35c0d844a"
+    },
+    {
+      "name": "libxcomposite1",
+      "version": "1:0.4.3-2",
+      "filename": "libxcomposite1_1%3a0.4.3-2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcomposite/libxcomposite1_0.4.3-2_armel.deb",
+      "sha256": "88728b80b88db2618f4cf389fab75111f56c3b589e8eb315dc00a2f9c98754d8"
+    },
+    {
+      "name": "libxcursor-dev",
+      "version": "1:1.1.13-1+deb7u1",
+      "filename": "libxcursor-dev_1%3a1.1.13-1+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcursor/libxcursor-dev_1.1.13-1+deb7u1_armel.deb",
+      "sha256": "9794c89aceaf484830b6c96c7c542a727cdfd4bb9824feb1967ecf5c9d5a3344"
+    },
+    {
+      "name": "libxcursor1",
+      "version": "1:1.1.13-1+deb7u1",
+      "filename": "libxcursor1_1%3a1.1.13-1+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxcursor/libxcursor1_1.1.13-1+deb7u1_armel.deb",
+      "sha256": "3f0b60ae0ac44441ffb35227f8b4d84231aa90aa85b0e46bfe965c03dc073774"
+    },
+    {
+      "name": "libxdamage-dev",
+      "version": "1:1.1.3-2",
+      "filename": "libxdamage-dev_1%3a1.1.3-2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxdamage/libxdamage-dev_1.1.3-2_armel.deb",
+      "sha256": "e1b17dcf6b25b71f42aaee1491618bceec2f50aa1a2d4e1e9b63e5421a880d9a"
+    },
+    {
+      "name": "libxdamage1",
+      "version": "1:1.1.3-2",
+      "filename": "libxdamage1_1%3a1.1.3-2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxdamage/libxdamage1_1.1.3-2_armel.deb",
+      "sha256": "f76a953c08393ef2234e3f449bcb9eb5cc66fbc824b2dfaa5e8d27a1f982fb19"
+    },
+    {
+      "name": "libxdmcp-dev",
+      "version": "1:1.1.1-1",
+      "filename": "libxdmcp-dev_1%3a1.1.1-1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxdmcp/libxdmcp-dev_1.1.1-1_armel.deb",
+      "sha256": "95e8419bf35e2a7ebee272fbfb4b90210c35d2f879a19c71df6046e1afebd2c0"
+    },
+    {
+      "name": "libxdmcp6",
+      "version": "1:1.1.1-1",
+      "filename": "libxdmcp6_1%3a1.1.1-1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxdmcp/libxdmcp6_1.1.1-1_armel.deb",
+      "sha256": "685f43f30b1d6a8f2bd97b4e4bbb5bbdf491ae4e5884ef0ed4b409bbf8ac6d43"
+    },
+    {
+      "name": "libxext-dev",
+      "version": "2:1.3.1-2+deb7u1",
+      "filename": "libxext-dev_2%3a1.3.1-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxext/libxext-dev_1.3.1-2+deb7u1_armel.deb",
+      "sha256": "3253b2760237669b7c4c01d25961bc05bf2c37bc64917a3f068a20ba1ece143d"
+    },
+    {
+      "name": "libxext6",
+      "version": "2:1.3.1-2+deb7u1",
+      "filename": "libxext6_2%3a1.3.1-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxext/libxext6_1.3.1-2+deb7u1_armel.deb",
+      "sha256": "7a9190214b3d77313c6ff97a240376de1646bae522de9edb4fcf263d11461abd"
+    },
+    {
+      "name": "libxfixes-dev",
+      "version": "1:5.0-4+deb7u1",
+      "filename": "libxfixes-dev_1%3a5.0-4+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxfixes/libxfixes-dev_5.0-4+deb7u1_armel.deb",
+      "sha256": "4203f433fe8070dc65445e896d316e092e8115bf95fa560ee45390a4cc23cf93"
+    },
+    {
+      "name": "libxfixes3",
+      "version": "1:5.0-4+deb7u1",
+      "filename": "libxfixes3_1%3a5.0-4+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxfixes/libxfixes3_5.0-4+deb7u1_armel.deb",
+      "sha256": "affe812a907d29d3b68b8c01b4c3feb62ac5754830ace1cfdbc774d451718c8a"
+    },
+    {
+      "name": "libxi-dev",
+      "version": "2:1.6.1-1+deb7u1",
+      "filename": "libxi-dev_2%3a1.6.1-1+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxi/libxi-dev_1.6.1-1+deb7u1_armel.deb",
+      "sha256": "865c4524ac5b014080c47525e7a49ddd69b8af9a9058c5c89c7407a49c651d50"
+    },
+    {
+      "name": "libxi6",
+      "version": "2:1.6.1-1+deb7u1",
+      "filename": "libxi6_2%3a1.6.1-1+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxi/libxi6_1.6.1-1+deb7u1_armel.deb",
+      "sha256": "9c96b3aad97bf5c5eab57f1fc74707cffe4aa45d7b28338c63599ad8c6556b9c"
+    },
+    {
+      "name": "libxinerama-dev",
+      "version": "2:1.1.2-1+deb7u1",
+      "filename": "libxinerama-dev_2%3a1.1.2-1+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxinerama/libxinerama-dev_1.1.2-1+deb7u1_armel.deb",
+      "sha256": "5905dcab46cf1dfcef98cff997c6f5920ea377e47aaca6d7ec0d192764181428"
+    },
+    {
+      "name": "libxinerama1",
+      "version": "2:1.1.2-1+deb7u1",
+      "filename": "libxinerama1_2%3a1.1.2-1+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxinerama/libxinerama1_1.1.2-1+deb7u1_armel.deb",
+      "sha256": "5333e055bfe7b63d7adbd38045326733ecfe27790e23b02cef72bbadaa337f56"
+    },
+    {
+      "name": "libxrandr-dev",
+      "version": "2:1.3.2-2+deb7u1",
+      "filename": "libxrandr-dev_2%3a1.3.2-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxrandr/libxrandr-dev_1.3.2-2+deb7u1_armel.deb",
+      "sha256": "0829c253728859a3c323b312091e32ec5923733a14992cc4a0c24467705d38dd"
+    },
+    {
+      "name": "libxrandr2",
+      "version": "2:1.3.2-2+deb7u1",
+      "filename": "libxrandr2_2%3a1.3.2-2+deb7u1_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxrandr/libxrandr2_1.3.2-2+deb7u1_armel.deb",
+      "sha256": "49cc40927d4b310d5faa7230ce772f68a3f17da3fb19b8a6c9712a8c50cb0658"
+    },
+    {
+      "name": "libxrender-dev",
+      "version": "1:0.9.7-1+deb7u2",
+      "filename": "libxrender-dev_1%3a0.9.7-1+deb7u2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxrender/libxrender-dev_0.9.7-1+deb7u2_armel.deb",
+      "sha256": "bb2a6ab6966f179e55acb863cab1692a9fdb299c00435b4e7af931285dced305"
+    },
+    {
+      "name": "libxrender1",
+      "version": "1:0.9.7-1+deb7u2",
+      "filename": "libxrender1_1%3a0.9.7-1+deb7u2_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/libx/libxrender/libxrender1_0.9.7-1+deb7u2_armel.deb",
+      "sha256": "a45bae710d9982dafaa62a9a865b97b90f0f198d22eecd6f1c2b3c500698d4ba"
+    },
+    {
+      "name": "x11proto-composite-dev",
+      "version": "1:0.4.2-2",
+      "filename": "x11proto-composite-dev_1%3a0.4.2-2_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-composite/x11proto-composite-dev_0.4.2-2_all.deb",
+      "sha256": "524fcfc77f61bcfda270ae6e2508e2eebdbf39e7d611d8ee13cd7ab38e2c0a44"
+    },
+    {
+      "name": "x11proto-core-dev",
+      "version": "7.0.23-1",
+      "filename": "x11proto-core-dev_7.0.23-1_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-core/x11proto-core-dev_7.0.23-1_all.deb",
+      "sha256": "97b323494864640e36dbc9becb38df89a1202e4449a20dd38dc5b4dcea5746e9"
+    },
+    {
+      "name": "x11proto-damage-dev",
+      "version": "1:1.2.1-2",
+      "filename": "x11proto-damage-dev_1%3a1.2.1-2_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-damage/x11proto-damage-dev_1.2.1-2_all.deb",
+      "sha256": "a4fa4c2f2a24d0a1d49c66315c17d1600d1583ac20f7627bcec3aedc47865f2f"
+    },
+    {
+      "name": "x11proto-fixes-dev",
+      "version": "1:5.0-2",
+      "filename": "x11proto-fixes-dev_1%3a5.0-2_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-fixes/x11proto-fixes-dev_5.0-2_all.deb",
+      "sha256": "e08e0aa9b58ffccc7685c6715df77a9c00781575a6229b4497b06b32bd61336c"
+    },
+    {
+      "name": "x11proto-input-dev",
+      "version": "2.2-1",
+      "filename": "x11proto-input-dev_2.2-1_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-input/x11proto-input-dev_2.2-1_all.deb",
+      "sha256": "f7cb888a1406c6fd861ebf4e069641f938ec7e889929e85373b35c3f04854952"
+    },
+    {
+      "name": "x11proto-kb-dev",
+      "version": "1.0.6-2",
+      "filename": "x11proto-kb-dev_1.0.6-2_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-kb/x11proto-kb-dev_1.0.6-2_all.deb",
+      "sha256": "b7ff8eceb9f05eb470700807c73fdae88f5f9f8b8fbef869029882264dbebd81"
+    },
+    {
+      "name": "x11proto-randr-dev",
+      "version": "1.3.2-2",
+      "filename": "x11proto-randr-dev_1.3.2-2_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-randr/x11proto-randr-dev_1.3.2-2_all.deb",
+      "sha256": "f35f10087800b438a61280a74a0fb6707dbb77f7a8781d2e23c7e432ec8bec88"
+    },
+    {
+      "name": "x11proto-render-dev",
+      "version": "2:0.11.1-2",
+      "filename": "x11proto-render-dev_2%3a0.11.1-2_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-render/x11proto-render-dev_0.11.1-2_all.deb",
+      "sha256": "606d63fab57421afe305e4866edb1948e4f9090409d6f63199838ac269d8cfba"
+    },
+    {
+      "name": "x11proto-xext-dev",
+      "version": "7.2.1-1",
+      "filename": "x11proto-xext-dev_7.2.1-1_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-xext/x11proto-xext-dev_7.2.1-1_all.deb",
+      "sha256": "ef03ac619fca98ac112a93404f23653b7732df8f7d26cea499ccf71ba985eb05"
+    },
+    {
+      "name": "x11proto-xinerama-dev",
+      "version": "1.2.1-2",
+      "filename": "x11proto-xinerama-dev_1.2.1-2_all.deb",
+      "url": "https://archive.debian.org/debian/pool/main/x/x11proto-xinerama/x11proto-xinerama-dev_1.2.1-2_all.deb",
+      "sha256": "b043b371e81e8e276eefca53dc114947bf984a3a004ef007452c3f74560ce140"
+    },
+    {
+      "name": "zlib1g",
+      "version": "1:1.2.7.dfsg-13",
+      "filename": "zlib1g_1%3a1.2.7.dfsg-13_armel.deb",
+      "url": "https://archive.debian.org/debian/pool/main/z/zlib/zlib1g_1.2.7.dfsg-13_armel.deb",
+      "sha256": "1d2c4fb19506b3c42216b6a61b9f9821d1a0799c8494a12ab188006904fd570b"
+    }
+  ]
+}
