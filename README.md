@@ -1,4 +1,4 @@
-# Khromium — Alpha 0.0.2
+# Khromium
 
 An experimental Chromium-powered browser for the jailbroken **Kindle Paperwhite 4 on firmware 5.17.1**, with a touch-friendly GTK2 interface and an on-screen keyboard.
 
